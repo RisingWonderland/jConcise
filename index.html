@@ -48,6 +48,7 @@ button:active {
 <body style="background-color: #E6E6E6;">
 	<!-- 底部状态栏 -->
 	<div id="statusBar">Status bar</div>
+	
 	<!-- 基础方法演示 -->
 	<h2>Basic Fn</h2>
 	<button name="basicFuncBtn" onclick="getScreenWidthHeight();">获得屏幕宽高值</button>
@@ -55,20 +56,29 @@ button:active {
 	<button name="basicFuncBtn" onclick="getPageWidthHeight();">获得网页内容总宽高值</button>
 	<button name="basicFuncBtn" onclick="getScrolledWidthHeight();">获得网页被卷去的高宽值</button>
 	<button name="basicFuncBtn" onclick="checkObjType();">检查对象类型</button>
+	
 	<!-- 选择器演示 -->
 	<h2>Selector</h2>
 	<button name="selecterBtn" onclick="getStatusBarContent();">获得状态栏内容</button>
 	<button name="selecterBtn" onclick="getShowBasicFunctionBtnText();">获得演示选择器的按钮的文字</button>
 	<button name="selecterBtn" onclick="getAllBtn();">获得Button对象</button>
+	
 	<!-- 数学工具演示 -->
 	<h2>Math</h2>
 	<button name="selecterBtn" onclick="getUUID();">获得一个UUID</button>
 	<button name="selecterBtn" onclick="getRandomNum();">获得[0,100)随机数</button>
 	<button name="selecterBtn" onclick="getRandomNumArr();">获得[0,100)不重复的随机数数组</button>
 	<button name="selecterBtn" onclick="convertHDOB();">7进制1234转换为16进制</button>
+	<button name="selecterBtn" onclick="unitConvert();">单位转换</button>
+	
+	<!-- 数组工具演示 -->
+	<h2>Array</h2>
+	<button name="selecterBtn" onclick="sumArray();">计算数组数组内容之和</button>
+	
 	<!-- 时间工具演示 -->
 	<h2>Date</h2>
 	<button name="dateFnBtn" onclick="getCustomDate();">输出自定义时间</button>
+	
 	<!-- 浏览器相关 -->
 	<h2>Browser</h2>
 	<button name="browserFnBtn" onclick="getBrowserInfo();">获得浏览器信息</button>
@@ -143,6 +153,14 @@ function getRandomNumArr(){
 function convertHDOB(){
 	statusBar.innerText = JC.Math.HDOB(1234, 7, 16);
 }
+function unitConvert(){
+	statusBar.innerText = JC.Math.unitConvert(3359, 2);
+}
+
+// 数组工具方法
+function sumArray(){
+	JC.Array.sum([1.,2,3,'4',5]);
+}
 
 // 时间工具方法
 function getCustomDate(){
@@ -171,9 +189,15 @@ var obj = {
 	}
 };
 
-JC.logObj(obj);
+//JC.logObj(obj);
 
 
+JC.Valid.clearIllegalChars("My name is Alice.", true, "!@#$%^&*");
+
+var arr = [1,2,3,4,'alice'];
+var str = 'alice';
+var n = 'Alicealice Hello W';
+console.log(JC.String.distinct(n));
 
 
 </script>

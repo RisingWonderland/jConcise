@@ -3,7 +3,9 @@
  * 基础功能：	BasicFunction
  * 选择器：		Selecter
  * 组件：		Component
+ * 字符串方法：	String
  * 数学方法：	Math
+ * 数组方法：	Array
  * 时间方法：	Date
  * 浏览器：		Browser
  * 合法性检查：	Valid
@@ -138,6 +140,14 @@ var JC = jConcise = {
 		return false;
 	},
 	
+	isObject: function(obj){
+		if(this.Valid.nonsense(obj)) return false;
+		if(typeof obj === 'object' && obj.constructor === Object){
+			return true;
+		}
+		return false;
+	},
+	
 	
 	/**
 	 * 以name - value的形式，log输出一个对象
@@ -152,6 +162,26 @@ var JC = jConcise = {
 				console.log(name + ': ' + obj[name]);
 			}
 		}
+	},
+	/**
+	 * 判断一个对象是否在一个容器中
+	 * @param {Object} container
+	 * @param {Object} obj
+	 */
+	contains: function(container, obj){
+		if(JC.Valid.nonsense(container)) return false;
+		if(JC.isArray(container) || JC.isObject(container)){
+			for(var key in container){
+				if(container[key] === obj){
+					return true;
+				}
+			}
+		}else if(JC.isString(container)){
+			if(container.indexOf(obj) !== -1){
+				return true;
+			}
+		}
+		return false;
 	},
 	
 	
@@ -215,6 +245,28 @@ var JC = jConcise = {
 	
 	
 	
+	// String				----------> Begin
+	String: {
+		/**
+		 * 让字符串中每个字符只出现一次
+		 * @param {Object} str
+		 */
+		distinct: function(str){
+			if(JC.isString(str)){
+				var arr = [];
+				for(var key in str){
+					if(!JC.contains(arr, str[key])){
+						arr.push(str[key]);
+					}
+				}
+				return arr.join('');
+			}
+			return str;
+		}
+	},
+	
+	
+	// String				----------> Begin
 	
 	
 	
@@ -223,7 +275,6 @@ var JC = jConcise = {
 	 * 数学相关方法
 	 */
 	Math: {
-		
 		/**
 		 * 创建并获得一个伪UUID，可以添加ID前缀
 		 * @param {String} prefix
@@ -333,10 +384,55 @@ var JC = jConcise = {
 		HDOB: function(n, b, a){
 			return parseInt('' + n, b).toString(a);
 		},
+		/**
+		 * 计算机存储大小单位转换，接收一个bytes型参数，转换为其他单位数值。
+		 * @param {Object} bytes
+		 * @param {Number} num
+		 * @param {Number} base
+		 */
+		unitConvert: function(bytes, num, base){
+			if(bytes === null || bytes === undefined || bytes <= 0){
+				return ['0', 'B'];
+			}
+			var base = (base === 1000 || base === 1024) ? base : 1024,
+				units = ['B','KB','MB','GB','TB','PB','EB','ZB','YB','BB','NB','DB','CB']
+				index = Math.floor(Math.log(bytes) / Math.log(base));
+			var size = (bytes / Math.pow(base, index)).toFixed(num < 0 ? 2 : num);
+			var unit = units[index];
+			return [size, unit];
+		},
+		
 	},
 	
 	
 	// Math					----------> End
+	
+	
+	
+	// Array				----------> Begin
+	/**
+	 * 数组相关方法
+	 */
+	Array: {
+		/**
+		 * 计算数组内数字之和
+		 * @param {Object} arr
+		 */
+		sum: function(arr){
+			var sum = 0;
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(JC.isNumber(arr[i])){
+						sum += arr[i];
+					}
+				}
+			}
+			return sum;
+		}
+	},
+	
+	
+	// Array				----------> End
 	
 	
 	
@@ -426,6 +522,30 @@ var JC = jConcise = {
 		 */
 		nonsense: function(obj){
 			if(obj === null || obj === undefined) return true;
+		},
+		/**
+		 * 去除字符串中的非法字符
+		 * @param {Object} str
+		 * @param {Object} trim 是否去除首位空格
+		 */
+		clearIllegalChars: function(str, trim, exclude){
+			var defExclude = '`~!@#$%^&*()=|{}\':;\',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“。，、？';
+			if(trim){
+				str = str.trim();
+			}
+			var regular = '';
+			if(JC.isString(exclude) || JC.isArray(exclude) || JC.isObject(exclude)){
+				exclude = JC.String.distinct(exclude);
+			}else{
+				
+			}
+			var reg = new RegExp('[]', 'g');
+//			var reg = new RegExp("[`~!@#$%^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+//			var resultStr = '';
+//			for(var i = 0;i < str.length;i++){
+//				resultStr += str.substr(i,1).replace(reg,'');
+//			}
+//			return str;
 		}
 	}
 	
