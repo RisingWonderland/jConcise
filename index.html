@@ -4,21 +4,177 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>jConcise example index page</title>
 <style type="text/css">
-
+html {
+	height: 100%;
+}
+body {
+	height: 100%;
+	margin: 0;
+}
+h2 {
+	clear: left;
+}
+#statusBar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	background-color: #EE82EE;
+	width: 100%;
+	height: 50px;
+	line-height: 50px;
+	overflow: hidden;
+	text-align: center;
+	font-size: 20px;
+	font-family: "microsoft yahei";
+}
+button {
+	float: left;
+	margin: 5px;
+	background-color: #3598DB;
+	border: 0;
+	font-size: 20px;
+	font-family: "microsoft yahei";
+}
+button:active {
+	background-color: #3B5999;
+}
 </style>
+<script type="text/javascript" src="./jConcise.js"></script>
 <script type="text/javascript">
 
 </script>
 </head>
 
-<body style="background-color:#E6E6E6;">
+<body style="background-color: #E6E6E6;">
+	<!-- 底部状态栏 -->
+	<div id="statusBar">Status bar</div>
+	<!-- 基础方法演示 -->
+	<h2>Basic Fn</h2>
+	<button name="basicFuncBtn" onclick="getScreenWidthHeight();">获得屏幕宽高值</button>
+	<button name="basicFuncBtn" onclick="getSightWidthHeight();">获得网页可见内容区域宽高值</button>
+	<button name="basicFuncBtn" onclick="getPageWidthHeight();">获得网页内容总宽高值</button>
+	<button name="basicFuncBtn" onclick="getScrolledWidthHeight();">获得网页被卷去的高宽值</button>
+	<button name="basicFuncBtn" onclick="checkObjType();">检查对象类型</button>
+	<!-- 选择器演示 -->
+	<h2>Selector</h2>
+	<button name="selecterBtn" onclick="getStatusBarContent();">获得状态栏内容</button>
+	<button name="selecterBtn" onclick="getShowBasicFunctionBtnText();">获得演示选择器的按钮的文字</button>
+	<button name="selecterBtn" onclick="getAllBtn();">获得Button对象</button>
+	<!-- 数学工具演示 -->
+	<h2>Math</h2>
+	<button name="selecterBtn" onclick="getUUID();">获得一个UUID</button>
+	<button name="selecterBtn" onclick="getRandomNum();">获得[0,100)随机数</button>
+	<button name="selecterBtn" onclick="getRandomNumArr();">获得[0,100)不重复的随机数数组</button>
+	<button name="selecterBtn" onclick="convertHDOB();">7进制1234转换为16进制</button>
+	<!-- 时间工具演示 -->
+	<h2>Date</h2>
+	<button name="dateFnBtn" onclick="getCustomDate();">输出自定义时间</button>
+	<!-- 浏览器相关 -->
+	<h2>Browser</h2>
+	<button name="browserFnBtn" onclick="getBrowserInfo();">获得浏览器信息</button>
 
-
-
-
-
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+</body>
 <script type="text/javascript">
+var statusBar = document.getElementById('statusBar');
+function getScreenWidthHeight(){
+	var w = JC.getScreenWidth();
+	var h = JC.getScreenHeight();
+	statusBar.innerHTML = 'Width: ' + w + ', Height: ' + h;
+}
+function getSightWidthHeight(){
+	var w = JC.getSightWidth();
+	var h = JC.getSightHeight();
+	statusBar.innerHTML = 'Width: ' + w + ', Height: ' + h;
+}
+function getPageWidthHeight(){
+	var w = JC.getPageWidth();
+	var h = JC.getPageHeight();
+	statusBar.innerHTML = 'Width: ' + w + ', Height: ' + h;
+}
+function getScrolledWidthHeight(){
+	var w = JC.getScrollTop();
+	var h = JC.getScrollLeft();
+	statusBar.innerHTML = 'Width: ' + w + ', Height: ' + h;
+}
+function getStatusBarContent(){
+	alert(JC.getById('statusBar').innerHTML);
+}
+function getShowBasicFunctionBtnText(){
+	var btnArr = JC.getByName('selecterBtn');
+	for(var i=0,l=btnArr.length;i < l;i++){
+		alert(btnArr[i].innerText);
+	}
+}
+function getAllBtn(){
+	var btnArr = JC.getByEl('Button')
+	for(var i=0,l=btnArr.length;i < l;i++){
+		alert(btnArr[i].innerText);
+	}
+}
+/**
+ * 检查对象类型
+ */
+function checkObjType(){
+	statusBar.innerText = 'Check console';
+	var arr = undefined;
+	console.log(JC.isArray(arr));
+	
+}
+
+// 数学工具方法
+function getUUID(){
+	statusBar.innerHTML = JC.Math.getUUID();
+}
+function getRandomNum(){
+	statusBar.innerHTML = JC.Math.getRandomNum(100);
+}
+function getRandomNumArr(){
+	statusBar.innerHTML = JC.Math.getRandomNumArr(100, 20, true);
+}
+function convertHDOB(){
+	statusBar.innerText = JC.Math.HDOB(1234, 7, 16);
+}
+
+// 时间工具方法
+function getCustomDate(){
+//	statusBar.innerText = JC.Date.setCurrentTime('99-9-23,14:56:19');
+	var end = new Date('2015/10/25,12:45:23');
+	var now = new Date();
+	var df = end.getTime() - now.getTime();
+	statusBar.innerText = parseInt((df/(60*60*1000))%24);
+}
+
+
+// 获得浏览器信息
+function getBrowserInfo(){
+	var name = JC.Browser.getName();
+	var version = JC.Browser.getVersion();
+	statusBar.innerText = 'Name: ' + name + ', Version: ' + version;
+}
+
+
+var obj = {
+	name: 'Alice',
+	age: 18,
+	sex: true,
+	greeting: function(){
+		console.log('Hi!');
+	}
+};
+
+JC.logObj(obj);
+
+
+
 
 </script>
-</body>
 </html>
