@@ -166,8 +166,11 @@ function sumArray(){
 function getCustomDate(){
 //	statusBar.innerText = JC.Date.setCurrentTime('99-9-23,14:56:19');
 	var end = new Date('2015/10/25,12:45:23');
+	console.log(end);
 	var now = new Date();
+	console.log(now);
 	var df = end.getTime() - now.getTime();
+	console.log(df);
 	statusBar.innerText = parseInt((df/(60*60*1000))%24);
 }
 
@@ -189,12 +192,19 @@ var obj = {
 	}
 };
 
-var str = 'Hello 123ali9ce.';
-console.log(JC.String.getChars(str));
-console.log(JC.String.getNumbersStr(str));
-console.log(JC.String.getCharsStr(str));
-console.log(JC.String.getNaN(str));
-console.log(JC.String.getNaNStr(str));
+var r = Math.random(100000);
+console.log(r);
+var date = new Date();
+console.log(date.getTime());
+console.log(date.setTime(0));
+console.log(date.toString());
+var d = new Date('9999-12-31 23:59:59');// 
+console.log(d.getTime());
+
+
+
+
+
 
 
 
