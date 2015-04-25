@@ -183,6 +183,25 @@ var JC = jConcise = {
 		}
 		return false;
 	},
+	/**
+	 * 去除对象中的重复数据，目前支持字符串、数组
+	 * @param {Object} obj 
+	 */
+	distinct: function(obj){
+		if(JC.isString(obj) || JC.isArray(obj)){
+			var arr = [];
+			for(var key in obj){
+				if(!JC.contains(arr, obj[key])){
+					arr.push(obj[key]);
+				}
+			}
+			if(JC.isString(obj)){
+				return arr.join('');
+			}
+			return arr;
+		}
+		return obj;
+	},
 	
 	
 	// BasicFunction		----------> End
@@ -247,26 +266,39 @@ var JC = jConcise = {
 	
 	// String				----------> Begin
 	String: {
-		/**
-		 * 让字符串中每个字符只出现一次
-		 * @param {Object} str
-		 */
-		distinct: function(str){
-			if(JC.isString(str)){
-				var arr = [];
-				for(var key in str){
-					if(!JC.contains(arr, str[key])){
-						arr.push(str[key]);
-					}
-				}
-				return arr.join('');
-			}
-			return str;
-		}
+		
 	},
 	
 	
 	// String				----------> Begin
+	
+	
+	
+	// Array				----------> Begin
+	/**
+	 * 数组相关方法
+	 */
+	Array: {
+		/**
+		 * 计算数组内数字之和
+		 * @param {Object} arr
+		 */
+		sum: function(arr){
+			var sum = 0;
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(JC.isNumber(arr[i])){
+						sum += arr[i];
+					}
+				}
+			}
+			return sum;
+		},
+		
+	},
+	
+	
+	// Array				----------> End
 	
 	
 	
@@ -409,33 +441,6 @@ var JC = jConcise = {
 	
 	
 	
-	// Array				----------> Begin
-	/**
-	 * 数组相关方法
-	 */
-	Array: {
-		/**
-		 * 计算数组内数字之和
-		 * @param {Object} arr
-		 */
-		sum: function(arr){
-			var sum = 0;
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(JC.isNumber(arr[i])){
-						sum += arr[i];
-					}
-				}
-			}
-			return sum;
-		}
-	},
-	
-	
-	// Array				----------> End
-	
-	
-	
 	
 	// Date					----------> Begin
 	/**
@@ -527,25 +532,20 @@ var JC = jConcise = {
 		 * 去除字符串中的非法字符
 		 * @param {Object} str
 		 * @param {Object} trim 是否去除首位空格
+		 * @param {Object} exclude 需要去除的内容，可以是字符串、数组和对象
 		 */
 		clearIllegalChars: function(str, trim, exclude){
-			var defExclude = '`~!@#$%^&*()=|{}\':;\',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“。，、？';
+			var defExclude = '`~!@#$%^&*()={}:;\',\\[\\].<>/?…—-|';
 			if(trim){
 				str = str.trim();
 			}
-			var regular = '';
 			if(JC.isString(exclude) || JC.isArray(exclude) || JC.isObject(exclude)){
-				exclude = JC.String.distinct(exclude);
+				exclude = JC.distinct(exclude);
 			}else{
-				
+				exclude = defExclude;
 			}
-			var reg = new RegExp('[]', 'g');
-//			var reg = new RegExp("[`~!@#$%^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
-//			var resultStr = '';
-//			for(var i = 0;i < str.length;i++){
-//				resultStr += str.substr(i,1).replace(reg,'');
-//			}
-//			return str;
+			var reg = new RegExp('[' + exclude + ']', 'g');
+			return str.replace(reg, '');
 		}
 	}
 	
