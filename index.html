@@ -182,19 +182,20 @@ function getBrowserInfo(){
 	statusBar.innerText = 'Name: ' + name + ', Version: ' + version;
 }
 
-
-var obj = {
-	name: 'Alice',
-	age: 18,
-	sex: true,
-	greeting: function(){
-		console.log('Hi!');
-	}
-};
+//JC.loop(function(){
+//	console.log(JC.Date.t().getFullYear());
+//}, 10);
 
 
-console.log(JC.Date.getRandomDate());
 
+console.log(JC.Regular.testNumber(11));
+console.log(JC.Regular.testNumber(11.11));
+console.log(JC.Regular.testNumber(.11));
+console.log(JC.Regular.testNumber('sgsdg11'));
+console.log(JC.Regular.testNumber('1s1.1112f'));
+console.log(/^[+-]?\d+(\.\d+)?|\.\d+$/.test('1s1.1112f'));
+
+console.log(/^[+-]?\d+(\.\d+)?|\d+$/g.test('1s1.1112f'));
 
 
 

@@ -8,7 +8,7 @@
  * 数组方法：	Array
  * 时间方法：	Date
  * 浏览器：		Browser
- * 合法性检查：	Valid
+ * 规则、正则或合法性检查：	Regular
  */
 var JC = jConcise = (function(){
 	var GCP = {
@@ -75,7 +75,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isNumber: function(obj){
-			if(this.Valid.nonsense(obj)) return false;
+			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'number' && obj.constructor === Number){
 				return true;
 			}
@@ -86,7 +86,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isBoolean: function(obj){
-			if(this.Valid.nonsense(obj)) return false;
+			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'boolean' && obj.constructor === Boolean){
 				return true;
 			}
@@ -97,7 +97,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isArray: function(obj){
-			if(this.Valid.nonsense(obj)) return false;
+			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'object' && obj.constructor === Array){
 				return true;
 			}
@@ -108,7 +108,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isDate: function(obj){
-			if(this.Valid.nonsense(obj)) return false;
+			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'object' && obj.constructor === Date){
 				return true;
 			}
@@ -119,7 +119,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isString: function(obj){
-			if(this.Valid.nonsense(obj)) return false;
+			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'string' && obj.constructor === String){
 				return true;
 			}
@@ -130,7 +130,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isFunction: function(obj){
-			if(this.Valid.nonsense(obj)) return false;
+			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'function' && obj.constructor === Function){
 				return true;
 			}
@@ -141,7 +141,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isRegExp: function(obj){
-			if(this.Valid.nonsense(obj)) return false;
+			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'object' && obj.constructor === RegExp){
 				return true;
 			}
@@ -149,7 +149,7 @@ var JC = jConcise = (function(){
 		},
 		
 		isObject: function(obj){
-			if(this.Valid.nonsense(obj)) return false;
+			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'object' && obj.constructor === Object){
 				return true;
 			}
@@ -177,7 +177,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj
 		 */
 		contains: function(container, obj){
-			if(JC.Valid.nonsense(container)) return false;
+			if(JC.Regular.nonsense(container)) return false;
 			if(JC.isArray(container) || JC.isObject(container)){
 				for(var key in container){
 					if(container[key] === obj){
@@ -209,6 +209,15 @@ var JC = jConcise = (function(){
 				return arr;
 			}
 			return obj;
+		},
+		/**
+		 * @param {Function} 要执行的方法
+		 * @param {Number} 执行次数
+		 */
+		loop: function(func, num){
+			for(var i=0;i < num;i++){
+				func();
+			}
 		},
 		
 		
@@ -330,7 +339,7 @@ var JC = jConcise = (function(){
 		Array: {
 			/**
 			 * 计算数组内数字之和
-			 * @param {Object} arr
+			 * @param {Array} arr
 			 */
 			sum: function(arr){
 				var sum = 0;
@@ -343,6 +352,25 @@ var JC = jConcise = (function(){
 				}
 				return sum;
 			},
+			/**
+			 * 计算数组内数字的平均值，忽略非数字
+			 * @param {Array} arr
+			 * @param {Boolean}
+			 */
+			avg: function(arr, strict){
+				var VALID_NUM = 0;
+				var sum = 0;
+				if(JC.isArray(arr)){
+					for(var i in arr){
+						if(JC.isNumber(arr[i])){
+							VALID_NUM += 1;
+							sum += arr[i];
+						}
+					}
+				}
+				return sum / VALID_NUM;
+			},
+			
 			
 		},
 		
@@ -498,8 +526,12 @@ var JC = jConcise = (function(){
 		Date: {
 			/**
 			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间对象
+			 * TODO: 该方法通过获得一个指定区间内的随机数作为Date对象的总毫秒值，
+			 * 通过Date对象的setTime方法获得随机Date对象。但随机数有很大的几率是较小的值，
+			 * 结果是生成的随机Date对象有很大几率徘徊于1970年。
+			 * 目前的解决方案是循环获得一定数量的随机数，取其平均值。 
 			 */
-			getRandomDate: function(str){
+			getRandomDate: function(){
 				var digit = parseInt(Math.random() * GCP.Date.maxMilliTimeDigit) + 1;
 				var sign = JC.Math.getRandomNum(2) === 1 ? 1: -1;
 				var milliTime = parseInt(Math.random() * Math.pow(10, digit)) * sign;
@@ -508,6 +540,29 @@ var JC = jConcise = (function(){
 				}else if(milliTime < GCP.Date.minMilliTime){
 					milliTime = GCP.Date.minMilliTime;
 				}
+				console.log(milliTime);
+				return new Date(milliTime);
+			},
+			
+			t: function(){
+				var LOOP_NUM = 7;
+				
+				
+				var numArr = [];
+				var milliTime = 0;
+				JC.loop(function(){
+					var digit = parseInt(Math.random() * GCP.Date.maxMilliTimeDigit) + 1;
+					var sign = JC.Math.getRandomNum(2) === 1 ? 1: -1;
+					milliTime = parseInt(Math.random() * Math.pow(10, digit)) * sign;
+					if(milliTime > GCP.Date.maxMilliTime){
+						milliTime = GCP.Date.maxMilliTime;
+					}else if(milliTime < GCP.Date.minMilliTime){
+						milliTime = GCP.Date.minMilliTime;
+					}
+					numArr.push(milliTime);
+				}, LOOP_NUM);
+				milliTime = JC.Array.sum(numArr) / LOOP_NUM;
+				
 				return new Date(milliTime);
 			}
 //			
@@ -579,11 +634,11 @@ var JC = jConcise = (function(){
 		
 		
 		
-		// Valid					----------> Begin
+		// Regular					----------> Begin
 		/**
-		 * 数据合法性检查
+		 * 规则、正则或合法性检查
 		 */
-		Valid: {
+		Regular: {
 			/**
 			 * 检查入参是否为无实际意义的参数，包括null和undefined
 			 * @param {Object} obj
@@ -609,11 +664,19 @@ var JC = jConcise = (function(){
 				}
 				var reg = new RegExp('[' + exclude + ']', 'g');
 				return str.replace(reg, '');
+			},
+			
+			/**
+			 * 检测入参是否为数字：+11,-11,11,11.,11.11,.11
+			 * @param {Object} obj
+			 */
+			testNumber: function(obj){
+				return /^[+-]?\d+(\.\d+)?|\.\d+$/g.test(obj);
 			}
 		}
 		
 		
-		// Valid					----------> End
+		// Regular					----------> End
 		
 	}
 })();
