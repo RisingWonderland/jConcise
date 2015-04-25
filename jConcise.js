@@ -266,7 +266,48 @@ var JC = jConcise = {
 	
 	// String				----------> Begin
 	String: {
-		
+		/**
+		 * 以数组形式返回入参字符串中的数字
+		 * @param {Object} str
+		 */
+		getNumbers: function(str){
+			return str.match(/\d/g);
+		},
+		/**
+		 * 以字符串的形式返回入参字符串中的数字
+		 * @param {Object} str
+		 */
+		getNumbersStr: function(str){
+			return this.getNumbers(str).join('');
+		},
+		/**
+		 * 以数组形式返回入参字符串中的字符
+		 * @param {Object} str
+		 */
+		getChars: function(str){
+			return str.match(/[a-zA-Z]/g);
+		},
+		/**
+		 * 以字符串的形式返回入参字符串中的字符
+		 * @param {Object} str
+		 */
+		getCharsStr: function(str){
+			return this.getChars(str).join('');
+		},
+		/**
+		 * 以数组形式返回入参字符串中非数字内容
+		 * @param {Object} str
+		 */
+		getNaN: function(str){
+			return str.match(/[^\d]/g);
+		},
+		/**
+		 * 以字符串形式返回入参字符串中非数字内容
+		 * @param {Object} str
+		 */
+		getNaNStr: function(str){
+			return this.getNaN(str).join('');
+		}
 	},
 	
 	
