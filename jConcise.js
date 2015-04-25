@@ -13,8 +13,9 @@
 var JC = jConcise = (function(){
 	var GCP = {
 		Date: {
-			beginMilliTime: 253370736000000,
-			endMilliTime: 253402271999000
+			mixMilliTime: -253370736000000,
+			maxMilliTime: 253402271999000,
+			maxMilliTimeDigit: 15
 		}
 	}
 	return {
@@ -495,22 +496,36 @@ var JC = jConcise = (function(){
 		 * 事件相关方法
 		 */
 		Date: {
-			
-			setCurrentTime: function(str){
-				return new Date(str);
-			},
 			/**
-			 * 计时器
+			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间对象
 			 */
-			timer: function(){
-				
-			},
-			/**
-			 * 倒计时
-			 */
-			countdown: function(seconds){
-				
-			},
+			getRandomDate: function(str){
+				var digit = parseInt(Math.random() * GCP.Date.maxMilliTimeDigit) + 1;
+				var sign = JC.Math.getRandomNum(2) === 1 ? 1: -1;
+				var milliTime = parseInt(Math.random() * Math.pow(10, digit)) * sign;
+				if(milliTime > GCP.Date.maxMilliTime){
+					milliTime = GCP.Date.maxMilliTime;
+				}else if(milliTime < GCP.Date.minMilliTime){
+					milliTime = GCP.Date.minMilliTime;
+				}
+				return new Date(milliTime);
+			}
+//			
+//			setCurrentTime: function(str){
+//				return new Date(str);
+//			},
+//			/**
+//			 * 计时器
+//			 */
+//			timer: function(){
+//				
+//			},
+//			/**
+//			 * 倒计时
+//			 */
+//			countdown: function(seconds){
+//				
+//			},
 		},
 		
 		
