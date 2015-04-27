@@ -298,14 +298,14 @@ var JC = jConcise = (function(){
 				return this.getNumbers(str).join('');
 			},
 			/**
-			 * 以数组形式返回入参字符串中的字符
+			 * 以数组形式返回入参字符串中的英文字符
 			 * @param {Object} str
 			 */
 			getChars: function(str){
 				return str.match(/[a-zA-Z]/g);
 			},
 			/**
-			 * 以字符串的形式返回入参字符串中的字符
+			 * 以字符串的形式返回入参字符串中的英文字符
 			 * @param {Object} str
 			 */
 			getCharsStr: function(str){
@@ -340,36 +340,158 @@ var JC = jConcise = (function(){
 			/**
 			 * 计算数组内数字之和
 			 * @param {Array} arr
+			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
-			sum: function(arr){
+			sum: function(arr, strict){
+				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+					strict = true;
+				}
 				var sum = 0;
 				if(JC.isArray(arr)){
 					for(var i in arr){
 						if(JC.isNumber(arr[i])){
 							sum += arr[i];
+						}else if(strict === false && JC.Regular.testNumber(arr[i])){
+							sum += parseFloat(arr[i]);
 						}
 					}
 				}
 				return sum;
 			},
 			/**
-			 * 计算数组内数字的平均值，忽略非数字
+			 * 计算数组内数字的平均值
 			 * @param {Array} arr
-			 * @param {Boolean}
+			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			avg: function(arr, strict){
+				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+					strict = true;
+				}
 				var VALID_NUM = 0;
 				var sum = 0;
 				if(JC.isArray(arr)){
 					for(var i in arr){
 						if(JC.isNumber(arr[i])){
-							VALID_NUM += 1;
 							sum += arr[i];
+							VALID_NUM += 1;
+						}else if(strict === false && JC.Regular.testNumber(arr[i])){
+							sum += parseFloat(arr[i]);
+							VALID_NUM += 1;
 						}
 					}
 				}
 				return sum / VALID_NUM;
 			},
+			/**
+			 * 获取一个数字数组中的最小值，如果没有合法的最小值，返回null
+			 * @param {Array} arr
+			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
+			 */
+			min: function(arr, strict){
+				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+					strict = true;
+				}
+				var min = null;
+				for(var i in arr){
+					var cur = arr[i];
+					if(JC.isNumber(cur) || (strict === false && JC.Regular.testNumber(cur))){
+						cur = parseFloat(cur);
+						if(min === null){
+							min = cur;
+						}
+						if(cur < min){
+							min = cur;
+						}
+					}
+				}
+				return min;
+			},
+			/**
+			 * 获取一个数字数组中的最大值，如果没有合法的最大值，返回null
+			 * @param {Array} arr
+			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
+			 */
+			max: function(arr, strict){
+				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+					strict = true;
+				}
+				var max = null;
+				for(var i in arr){
+					var cur = arr[i];
+					if(JC.isNumber(cur) || (strict === false && JC.Regular.testNumber(cur))){
+						cur = parseFloat(cur);
+						if(max === null){
+							max = cur;
+						}
+						if(cur > max){
+							max = cur;
+						}
+					}
+				}
+				return max;
+			},
+			/**
+			 * 获取一个数字数组中的最小值和最大值，如果没有合法的极值，对应返回值为null
+			 * @param {Array} arr
+			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
+			 * @param {Array} 一个包含两个元素的数组，元素1是最小值，元素2是最大值
+			 */
+			extreme: function(arr, strict){
+				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+					strict = true;
+				}
+				var min = null;
+				var max = null;
+				for(var i in arr){
+					var cur = arr[i];
+					if(JC.isNumber(cur) || (strict === false && JC.Regular.testNumber(cur))){
+						cur = parseFloat(cur);
+						if(min === null){
+							min = cur;
+						}
+						if(max === null){
+							max = cur;
+						}
+						if(cur < min){
+							min = cur;
+						}
+						if(cur > max){
+							max = cur;
+						}
+					}
+				}
+				return [min, max];
+			},
+			/**
+			 * 计算一个数字数组中所有数字的次方
+			 * @param {Array} arr
+			 * @param {Number} exp 次方值
+			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
+			 * @param {Boolean} returnAll 在返回的数组中，是否按照入参数组，原样（原值、原位置）返回非数字元素
+			 */
+			pow: function(arr, exp, strict, returnAll){
+				if(!JC.isNumber(exp)){
+					exp = 1;
+				}
+				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+					strict = true;
+				}if(JC.Regular.nonsense(returnAll) || !JC.isBoolean(returnAll)){
+					returnAll = true;
+				}
+				
+				var newArr = [];
+				for(var i=0,l=arr.length;i < l;i++){
+					var cur = arr[i];
+					if(JC.isNumber(cur) || (strict === false && JC.Regular.testNumber(cur))){
+						cur = parseFloat(cur);
+						cur = Math.pow(cur, exp);
+						newArr.push(cur);
+					}else if(returnAll === true){
+						newArr.push(cur);
+					}
+				}
+				return newArr;
+			}
 			
 			
 		},
