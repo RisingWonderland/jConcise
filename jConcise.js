@@ -667,11 +667,11 @@ var JC = jConcise = (function(){
 			},
 			
 			/**
-			 * 检测入参是否为数字：+11,-11,11,11.,11.11,.11
+			 * 检测入参是否为数字：+11, -11, 11, 11., 11.11, .11, -.11
 			 * @param {Object} obj
 			 */
 			testNumber: function(obj){
-				return /^[+-]?\d+(\.\d+)?|\.\d+$/g.test(obj);
+				return /^[+-]?\d*\.?(\d+)?$/.test(obj);
 			}
 		}
 		
