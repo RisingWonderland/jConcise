@@ -648,6 +648,55 @@ var JC = jConcise = (function(){
 		 */
 		Date: {
 			/**
+			 * 补零，如果入参是大于等于0且小于等于10的数字，前置补零（默认）
+			 * 可以根据Boolean型参follow的值，进行后置补零
+			 * @param {Number} num 后置加零
+			 * @param {Boolean} follow 后置加零
+			 */
+			zeroFill: function(num, follow){
+				if(!JC.isNumber(num)) return num;
+				if(!JC.isBoolean(follow)) follow = false;
+				
+				if(num >= 0 && num <= 9){
+					if(!follow){
+						num = '0' + num;
+					}else{
+						num += '0';
+					}
+					return num;
+				}
+				return num;
+			},
+			/**
+			 * 格式化时间字符串
+			 * 将Date类型的时间对象转换为指定格式的字符串
+			 * @param {String} style 格式化样式
+			 * @param {Date} date 要格式化的时间，如果该值不是Date类型，或者为null，使用系统当前时间
+			 */
+			formatDate: function(style, date){
+				if(JC.Regular.nonsense(date) || !JC.isDate(date)){
+					date = new Date();
+				}
+				
+				var fy = date.getFullYear();
+				var sy = date.getYear();
+				var m = date.getMonth() + 1;
+				var d = date.getDate();
+				
+				
+			},
+			/**
+			 * 快速格式化时间字符串
+			 * 将Date类型的时间对象以预定义的样式格式化为字符串
+			 * @param {String} type
+			 * @param {Date} date
+			 */
+			quickFormatDate: function(type, date){
+				
+			},
+			
+			
+			/**
 			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间对象
 			 * TODO: 该方法通过获得一个指定区间内的随机数作为Date对象的总毫秒值，
 			 * 通过Date对象的setTime方法获得随机Date对象。但随机数有很大的几率是较小的值，
@@ -673,7 +722,7 @@ var JC = jConcise = (function(){
 			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间字符串
 			 */
 			getRandomDateStr: function(){
-				console.log(1);
+				
 			}
 			
 			
