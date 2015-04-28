@@ -13,7 +13,8 @@
 var JC = jConcise = (function(){
 	var GCP = {
 		Date: {
-			mixMilliTime: -253370736000000,
+			yearZero: 946656000000,
+			minMilliTime: -253370736000000,
 			maxMilliTime: 253402271999000,
 			maxMilliTimeDigit: 15
 		}
@@ -631,7 +632,7 @@ var JC = jConcise = (function(){
 				var size = (bytes / Math.pow(base, index)).toFixed(num < 0 ? 2 : num);
 				var unit = units[index];
 				return [size, unit];
-			},
+			}
 			
 		},
 		
@@ -654,39 +655,32 @@ var JC = jConcise = (function(){
 			 * 目前的解决方案是循环获得一定数量的随机数，取其平均值。 
 			 */
 			getRandomDate: function(){
-				var digit = parseInt(Math.random() * GCP.Date.maxMilliTimeDigit) + 1;
-				var sign = JC.Math.getRandomNum(2) === 1 ? 1: -1;
-				var milliTime = parseInt(Math.random() * Math.pow(10, digit)) * sign;
-				if(milliTime > GCP.Date.maxMilliTime){
-					milliTime = GCP.Date.maxMilliTime;
-				}else if(milliTime < GCP.Date.minMilliTime){
-					milliTime = GCP.Date.minMilliTime;
-				}
-				console.log(milliTime);
-				return new Date(milliTime);
-			},
-			
-			t: function(){
 				var LOOP_NUM = 7;
-				
-				
 				var numArr = [];
 				var milliTime = 0;
-				JC.loop(function(){
+				while(numArr.length < LOOP_NUM){
 					var digit = parseInt(Math.random() * GCP.Date.maxMilliTimeDigit) + 1;
 					var sign = JC.Math.getRandomNum(2) === 1 ? 1: -1;
 					milliTime = parseInt(Math.random() * Math.pow(10, digit)) * sign;
-					if(milliTime > GCP.Date.maxMilliTime){
-						milliTime = GCP.Date.maxMilliTime;
-					}else if(milliTime < GCP.Date.minMilliTime){
-						milliTime = GCP.Date.minMilliTime;
+					if(milliTime <= GCP.Date.maxMilliTime && milliTime >= GCP.Date.minMilliTime){
+						numArr.push(milliTime);
 					}
-					numArr.push(milliTime);
-				}, LOOP_NUM);
-				milliTime = JC.Array.sum(numArr) / LOOP_NUM;
-				
+				}
+				milliTime = JC.Array.avg(numArr);
 				return new Date(milliTime);
+			},
+			/**
+			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间字符串
+			 */
+			getRandomDateStr: function(){
+				console.log(1);
 			}
+			
+			
+			
+			
+			
+			
 //			
 //			setCurrentTime: function(str){
 //				return new Date(str);
