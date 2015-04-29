@@ -182,9 +182,6 @@ function getBrowserInfo(){
 	statusBar.innerText = 'Name: ' + name + ', Version: ' + version;
 }
 
-//JC.loop(function(){
-//	console.log(JC.Date.t().getFullYear());
-//}, 10);
 
 //var arr = [3, 7, 4, 'hello', '.6', '9.9'];
 //console.log(JC.Array.max(arr));
@@ -197,21 +194,9 @@ function getBrowserInfo(){
 //	console.log(JC.Date.getRandomDate());
 //}, 7);
 
-var date = new Date()
-var f = 'yyyy-MM-dd HH:mm:ss';
-var str = f.replace(/yyyy|MM|dd|HH|mm|ss/g, function(s){
-	switch(s){
-		case 'yyyy': return date.getFullYear();
-		case 'MM': return date.getMonth() + 1;
-		case 'dd': return date.getDate();
-		case 'HH': return date.getHours() % 12;
-		case 'mm': return date.getMinutes();
-		case 'ss': return date.getSeconds();
-	}
-});
-console.log(str);
 
-console.log(JC.Date.zeroFill(10));
+
+
 
 
 

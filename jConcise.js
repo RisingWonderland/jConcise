@@ -647,10 +647,14 @@ var JC = jConcise = (function(){
 		 * 事件相关方法
 		 */
 		Date: {
+			FORMAT_TYPE_DATE: 'yyyy-MM-dd',
+			FORMAT_TYPE_TIME: 'HH:mm:ss',
+			FORMAT_TYPE_DATETIME: 'yyyy-MM-dd HH:mm:ss',
+			
 			/**
 			 * 补零，如果入参是大于等于0且小于等于10的数字，前置补零（默认）
 			 * 可以根据Boolean型参follow的值，进行后置补零
-			 * @param {Number} num 后置加零
+			 * @param {Number} num
 			 * @param {Boolean} follow 后置加零
 			 */
 			zeroFill: function(num, follow){
@@ -667,9 +671,19 @@ var JC = jConcise = (function(){
 				}
 				return num;
 			},
+			
 			/**
 			 * 格式化时间字符串
 			 * 将Date类型的时间对象转换为指定格式的字符串
+			 * 格式化参数：
+			 * yyyy: 四位年份
+			 * yy: 两位年份
+			 * MM: 月份
+			 * dd: 日期在其所在月
+			 * HH: 小时，24小时制
+			 * mm: 分钟
+			 * ss: 秒
+			 * ms: 毫秒
 			 * @param {String} style 格式化样式
 			 * @param {Date} date 要格式化的时间，如果该值不是Date类型，或者为null，使用系统当前时间
 			 */
@@ -678,21 +692,41 @@ var JC = jConcise = (function(){
 					date = new Date();
 				}
 				
-				var fy = date.getFullYear();
-				var sy = date.getYear();
-				var m = date.getMonth() + 1;
-				var d = date.getDate();
-				
-				
+				var dateStr = style.replace(/yyyy|yy|MM|dd|HH|mm|ss|ms/g, function(s){
+					switch(s){
+						case 'yyyy': return date.getFullYear();
+						case 'yy': return date.getYear();
+						case 'MM': return JC.Date.zeroFill(date.getMonth() + 1);
+						case 'dd': return JC.Date.zeroFill(date.getDate());
+						case 'HH': return JC.Date.zeroFill(date.getHours());
+						case 'mm': return JC.Date.zeroFill(date.getMinutes());
+						case 'ss': return JC.Date.zeroFill(date.getSeconds());
+						case 'ms': return date.getMilliseconds();
+					}
+				});
+				return dateStr;
 			},
 			/**
 			 * 快速格式化时间字符串
 			 * 将Date类型的时间对象以预定义的样式格式化为字符串
+			 * 该方法调用formatDate方法
+			 * 预定义type：
+			 * date: yyyy-MM-dd
+			 * time: HH:mm:ss
+			 * datetime: yyyy-MM-dd HH:mm:ss
+			 * 默认为datetime
 			 * @param {String} type
 			 * @param {Date} date
 			 */
 			quickFormatDate: function(type, date){
+				var style = this.FORMAT_TYPE_DATETIME;
+				if(type === 'date'){
+					style = this.FORMAT_TYPE_DATE;
+				}else if(type === 'time'){
+					style = this.FORMAT_TYPE_TIME;
+				}
 				
+				return this.formatDate(style, date);
 			},
 			
 			
