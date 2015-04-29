@@ -754,9 +754,18 @@ var JC = jConcise = (function(){
 			},
 			/**
 			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间字符串
+			 * 可以指定时间字符串的样式
+			 * @param {String} style
 			 */
-			getRandomDateStr: function(){
+			getRandomDateStr: function(style){
+				if(JC.Regular.nonsense(style) || !JC.isString(style)){
+					style = this.FORMAT_TYPE_DATETIME;
+				}
 				
+				return this.formatDate(
+					style, 
+					this.getRandomDate()
+				);
 			}
 			
 			
