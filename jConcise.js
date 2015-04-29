@@ -70,7 +70,43 @@ var JC = jConcise = (function(){
 			return document.body.scrollLeft;
 		},
 		
+		/**
+		 * 遍历对象
+		 * @param {Object} obj 可遍历的对象String、Array、Object
+		 * @param {Object} func 遍历到每个元素后执行的方法，接收当前被遍历的元素
+		 */
+		iteration: function(obj, func){
+			for(var i in obj){
+				func(obj[i]);
+			}
+		},
 		
+		/**
+		 * 判断入参是否为数组
+		 * @param {Object} obj 要检查的内容
+		 */
+		isArray: function(obj){
+			if(this.Regular.nonsense(obj)) return false;
+			if(typeof obj === 'object' && obj.constructor === Array){
+				return true;
+			}
+			return false;
+		},
+		/**
+		 * 判断入参数组内的元素是否都为数组
+		 * @param {Object} arr
+		 */
+		isArrays: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isArray(arr[i])){
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		},
 		/**
 		 * 判断入参是否为数字
 		 * @param {Object} obj 要检查的内容
@@ -83,23 +119,44 @@ var JC = jConcise = (function(){
 			return false;
 		},
 		/**
+		 * 判断入参数组内的元素是否都为数字
+		 * @param {Array} arr
+		 */
+		isNumbers: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isNumber(arr[i])){
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		},
+		/**
 		 * 判断入参是否为Boolean值
 		 * @param {Object} obj 要检查的内容
 		 */
 		isBoolean: function(obj){
 			if(this.Regular.nonsense(obj)) return false;
+//			if(this.isArray())
+			
 			if(typeof obj === 'boolean' && obj.constructor === Boolean){
 				return true;
 			}
 			return false;
 		},
 		/**
-		 * 判断入参是否为数组
-		 * @param {Object} obj 要检查的内容
+		 * 判断入参数组内的元素是否都为布尔值
+		 * @param {Object} arr
 		 */
-		isArray: function(obj){
-			if(this.Regular.nonsense(obj)) return false;
-			if(typeof obj === 'object' && obj.constructor === Array){
+		ifBooleans: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isBoolean(arr[i])){
+						return false;
+					}
+				}
 				return true;
 			}
 			return false;
@@ -116,12 +173,42 @@ var JC = jConcise = (function(){
 			return false;
 		},
 		/**
+		 * 判断入参数组内的元素是否都是Date对象
+		 * @param {Object} arr
+		 */
+		isDates: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isDate(arr[i])){
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		},
+		/**
 		 * 判断入参是否为String类型
 		 * @param {Object} obj 要检查的内容
 		 */
 		isString: function(obj){
 			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'string' && obj.constructor === String){
+				return true;
+			}
+			return false;
+		},
+		/**
+		 * 判断入参数组内的元素是否都是String字符串
+		 * @param {Object} arr
+		 */
+		isStrings: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isString(arr[i])){
+						return false;
+					}
+				}
 				return true;
 			}
 			return false;
@@ -138,6 +225,21 @@ var JC = jConcise = (function(){
 			return false;
 		},
 		/**
+		 * 判断入参数组内的元素是否都是Function
+		 * @param {Object} arr
+		 */
+		isFunctions: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isFunction(arr[i])){
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		},
+		/**
 		 * 判断入参是否为正则表达式
 		 * @param {Object} obj 要检查的内容
 		 */
@@ -148,10 +250,43 @@ var JC = jConcise = (function(){
 			}
 			return false;
 		},
-		
+		/**
+		 * 判断入参数组内的元素是否都是正则表达式
+		 * @param {Object} arr
+		 */
+		isRegExps: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isRegExp(arr[i])){
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		},
+		/**
+		 * 判断入参是否为Object对象
+		 * @param {Object} obj
+		 */
 		isObject: function(obj){
 			if(this.Regular.nonsense(obj)) return false;
 			if(typeof obj === 'object' && obj.constructor === Object){
+				return true;
+			}
+			return false;
+		},
+		/**
+		 * 判断入参数组内的元素是否都是Object对象
+		 * @param {Object} arr
+		 */
+		isObjects: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isObject(arr[i])){
+						return false;
+					}
+				}
 				return true;
 			}
 			return false;
@@ -766,7 +901,17 @@ var JC = jConcise = (function(){
 					style, 
 					this.getRandomDate()
 				);
+			},
+			
+			/**
+			 * 获得一个指定时间区域内的随机时间
+			 * @param {Date} start
+			 * @param {Date} end
+			 */
+			getRandomDateByRange: function(start, end){
+				
 			}
+			
 			
 			
 			
