@@ -150,7 +150,7 @@ var JC = jConcise = (function(){
 		 * 判断入参数组内的元素是否都为布尔值
 		 * @param {Object} arr
 		 */
-		ifBooleans: function(arr){
+		isBooleans: function(arr){
 			if(JC.isArray(arr)){
 				for(var i in arr){
 					if(!JC.isBoolean(arr[i])){
