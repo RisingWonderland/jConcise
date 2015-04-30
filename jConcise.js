@@ -878,25 +878,9 @@ var JC = jConcise = (function(){
 			
 			/**
 			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间对象
-			 * TODO: 该方法通过获得一个指定区间内的随机数作为Date对象的总毫秒值，
-			 * 通过Date对象的setTime方法获得随机Date对象。但随机数有很大的几率是较小的值，
-			 * 结果是生成的随机Date对象有很大几率徘徊于1970年。
-			 * 目前的解决方案是循环获得一定数量的随机数，取其平均值。 
 			 */
 			getRandomDate: function(){
-				var LOOP_NUM = 7;
-				var numArr = [];
-				var milliTime = 0;
-				while(numArr.length < LOOP_NUM){
-					var digit = parseInt(Math.random() * GCP.Date.maxMilliTimeDigit) + 1;
-					var sign = JC.Math.getRandomNum(2) === 1 ? 1: -1;
-					milliTime = parseInt(Math.random() * Math.pow(10, digit)) * sign;
-					if(milliTime <= GCP.Date.maxMilliTime && milliTime >= GCP.Date.minMilliTime){
-						numArr.push(milliTime);
-					}
-				}
-				milliTime = JC.Array.avg(numArr);
-				return new Date(milliTime);
+				return this.getRandomDateByRange(new Date(GCP.Date.maxMilliTime), new Date(GCP.Date.minMilliTime));
 			},
 			/**
 			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间字符串
@@ -920,7 +904,9 @@ var JC = jConcise = (function(){
 			 * @param {Date} end
 			 */
 			getRandomDateByRange: function(start, end){
-				
+				var startMilliTime = start.getTime();
+				var td = end.getTime() - startMilliTime;
+				return new Date(startMilliTime + parseInt(Math.random() * td));
 			}
 			
 			
