@@ -306,6 +306,8 @@ var JC = jConcise = (function(){
 		 * @param {Boolean} execFunc 是否执行对象中的方法
 		 */
 		logObj: function(obj, execFunc){
+			if(!JC.isBoolean(execFunc)) execFunc = false;
+			
 			for(var name in obj){
 				if(this.isFunction(obj[name]) && execFunc == true){
 					obj[name]();
@@ -314,6 +316,32 @@ var JC = jConcise = (function(){
 				}
 			}
 		},
+		/**
+		 * 遍历一个对象，针对其中的元素执行某方法
+		 * @param {Object} obj
+		 * @param {Object} func
+		 */
+		loopObj: function(obj, func){
+			if(!(obj.length >= 0 && JC.isFunction(func))) return;
+			
+			for(var name in obj){
+				func(obj[name]);
+			}
+		},
+		/**
+		 * 循环执行某方法一定次数
+		 * @param {Function} 要执行的方法
+		 * @param {Number} 执行次数
+		 */
+		loop: function(func, num){
+			if(!JC.isFunction(func)) return;
+			if(!JC.isNumber(num) || num < 0) num = 0;
+			
+			for(var i=0;i < num;i++){
+				func();
+			}
+		},
+		
 		/**
 		 * 判断一个对象是否在一个容器中
 		 * @param {Object} container
@@ -352,15 +380,6 @@ var JC = jConcise = (function(){
 				return arr;
 			}
 			return obj;
-		},
-		/**
-		 * @param {Function} 要执行的方法
-		 * @param {Number} 执行次数
-		 */
-		loop: function(func, num){
-			for(var i=0;i < num;i++){
-				func();
-			}
 		},
 		/**
 		 * 生成随机颜色字符串
@@ -660,13 +679,6 @@ var JC = jConcise = (function(){
 		 * 数学相关方法
 		 */
 		Math: {
-			/**
-			 * 判断一个数字（字符串）是否为正整数（字符串）
-			 * @param {Object} num
-			 */
-			isPositiveInteger: function(num){
-				return /^[+]?[1-9]+\d*$/.test('' + num);
-			},
 			
 			/**
 			 * 创建并获得一个伪UUID，可以添加ID前缀
@@ -1020,6 +1032,51 @@ var JC = jConcise = (function(){
 				);
 			},
 			/**
+			 * 获得一组指定时间区间内内升序排列的随机时间对象
+			 * 如果起始时间和截止时间并非都是Date对象，或者截止时间小于起始时间，返回空数组
+			 * @param {Number} size 随机时间数量
+			 * @param {Date} start 开始时间
+			 * @param {Date} end 结束时间
+			 * @return {Array}
+			 */
+			getRandomDateArrByRange: function(size, start, end){
+				if(!(JC.isDates([start, end]) && end >= start)){
+					return [];
+				}
+				if(!JC.Regular.testPositiveInteger(size)){
+					size = 0;
+				}
+				size = parseInt(size);
+				
+				var arr = [];
+				JC.loop(function(){
+					arr.push(JC.Date.getRandomDateByRange(start, end));
+				}, size);
+				
+				return arr.sort(function(a, b){
+					return a - b;
+				});
+			},
+			/**
+			 * 获得一组指定时间区间内内升序排列的随机时间字符串
+			 * @param {Number} size
+			 * @param {Date} start
+			 * @param {Date} end
+			 * @param {String} style
+			 */
+			getRandomDateStrArrByRange: function(size, start, end, style){
+				var arr = this.getRandomDateArrByRange(size, start, end);
+				arr.sort(function(a, b){
+					return a - b;
+				});
+				
+				var strArr = [];
+				JC.loopObj(arr, function(date){
+					strArr.push(JC.Date.formatDate(style, date));
+				});
+				return strArr;
+			},
+			/**
 			 * 以当前系统时间为基准，指定一个时间偏移量，获取一个该偏移量内的随机时间对象
 			 * @param {String} offset
 			 */
@@ -1038,27 +1095,26 @@ var JC = jConcise = (function(){
 					switch(unit){
 					case 'y': 
 						var year = c.slice(0, c.length - 1);
-						if(JC.Math.isPositiveInteger(year)) i_y = parseInt(year);
+						if(JC.Regular.testPositiveInteger(year)) i_y = parseInt(year);
 					case 'M':
-						break;
 						var month = c.slice(0, c.length - 1);
-						if(JC.Math.isPositiveInteger(month)) i_M = parseInt(month);
+						if(JC.Regular.testPositiveInteger(month)) i_M = parseInt(month);
 						break;
 					case 'd':
 						var day = c.slice(0, c.length - 1);
-						if(JC.Math.isPositiveInteger(day)) i_d = parseInt(day);
+						if(JC.Regular.testPositiveInteger(day)) i_d = parseInt(day);
 						break;
 					case 'H':
 						var hour = c.slice(0, c.length - 1);
-						if(JC.Math.isPositiveInteger(hour)) i_H = parseInt(hour);
+						if(JC.Regular.testPositiveInteger(hour)) i_H = parseInt(hour);
 						break;
 					case 'm':
 						var minutes = c.slice(0, c.length - 1);
-						if(JC.Math.isPositiveInteger(minutes)) i_m = parseInt(minutes);
+						if(JC.Regular.testPositiveInteger(minutes)) i_m = parseInt(minutes);
 						break;
 					case 's':
 						var seconds = c.slice(0, c.length - 1);
-						if(JC.Math.isPositiveInteger(seconds)) i_s = parseInt(seconds);
+						if(JC.Regular.testPositiveInteger(seconds)) i_s = parseInt(seconds);
 						break;
 					}
 				});
@@ -1086,6 +1142,46 @@ var JC = jConcise = (function(){
 			 */
 			getRandomDateStrByNow: function(offset, style){
 				return this.formatDate(style, this.getRandomDateByNow(offset));
+			},
+			/**
+			 * 以当前系统时间为基准，指定一个时间偏移量，获取一组该偏移量内的随机时间对象
+			 * @param {Number} size
+			 * @param {String} offset
+			 * @return {Array}
+			 */
+			getRandomDateArrByNow: function(size, offset){
+				if(!JC.Regular.testPositiveInteger(size)){
+					size = 0;
+				}
+				size = parseInt(size);
+				
+				var arr = [];
+				JC.loop(function(){
+					arr.push(JC.Date.getRandomDateByNow(offset));
+				}, size);
+				
+				return arr.sort(function(a, b){
+					return a - b;
+				});
+			},
+			/**
+			 * 以当前系统时间为基准，指定一个时间偏移量，获取一组该偏移量内的随机时间字符串
+			 * @param {Number} size
+			 * @param {String} offset
+			 * @param {String} style
+			 * @return {Array}
+			 */
+			getRandomDateStrArrByNow: function(size, offset, style){
+				var arr = this.getRandomDateArrByNow(size, offset);
+				arr.sort(function(a, b){
+					return a - b;
+				});
+				
+				var strArr = [];
+				JC.loopObj(arr, function(date){
+					strArr.push(JC.Date.formatDate(style, date));
+				});
+				return strArr;
 			}
 			
 			
@@ -1218,6 +1314,13 @@ var JC = jConcise = (function(){
 			 */
 			testNumber: function(obj){
 				return /^[+-]?\d*(\.\d+)?$/.test(obj);
+			},
+			/**
+			 * 判断一个数字（字符串）是否为正整数（字符串）
+			 * @param {Object} num
+			 */
+			testPositiveInteger: function(num){
+				return /^[+]?[1-9]+\d*$/.test('' + num);
 			}
 		}
 		
