@@ -130,8 +130,9 @@ var JC = jConcise = (function(){
 					}
 				}
 				return true;
+			}else{
+				return this.isNumber(arr);
 			}
-			return false;
 		},
 		/**
 		 * 判断入参是否为Boolean值
@@ -158,8 +159,9 @@ var JC = jConcise = (function(){
 					}
 				}
 				return true;
+			}else{
+				return this.isBoolean(arr);
 			}
-			return false;
 		},
 		/**
 		 * 判断入参是否为Date对象
@@ -184,8 +186,9 @@ var JC = jConcise = (function(){
 					}
 				}
 				return true;
+			}else{
+				return this.isDate(arr);
 			}
-			return false;
 		},
 		/**
 		 * 判断入参是否为String类型
@@ -210,8 +213,9 @@ var JC = jConcise = (function(){
 					}
 				}
 				return true;
+			}else{
+				return this.isString(arr);
 			}
-			return false;
 		},
 		/**
 		 * 判断入参是否为Function
@@ -236,8 +240,9 @@ var JC = jConcise = (function(){
 					}
 				}
 				return true;
+			}else{
+				return this.isFunction(arr);
 			}
-			return false;
 		},
 		/**
 		 * 判断入参是否为正则表达式
@@ -262,8 +267,9 @@ var JC = jConcise = (function(){
 					}
 				}
 				return true;
+			}else{
+				return this.isRegExp(arr);
 			}
-			return false;
 		},
 		/**
 		 * 判断入参是否为Object对象
@@ -288,8 +294,9 @@ var JC = jConcise = (function(){
 					}
 				}
 				return true;
+			}else{
+				return this.isObject(arr);
 			}
-			return false;
 		},
 		
 		
@@ -362,7 +369,7 @@ var JC = jConcise = (function(){
 		getRandomColor: function(){
 			var color = '#';
 			JC.loop(function(){
-				color += JC.Math.HDOB(parseInt(Math.random() * 16), 10, 16);
+				color += JC.Math.HDOB(JC.Math.getRandomNum(16), 10, 16);
 			}, 6);
 			return color;
 		},
@@ -654,6 +661,14 @@ var JC = jConcise = (function(){
 		 */
 		Math: {
 			/**
+			 * 判断一个数字（字符串）是否为正整数（字符串）
+			 * @param {Object} num
+			 */
+			isPositiveInteger: function(num){
+				return /^[+]?[1-9]+\d*$/.test('' + num);
+			},
+			
+			/**
 			 * 创建并获得一个伪UUID，可以添加ID前缀
 			 * @param {String} prefix
 			 */
@@ -798,6 +813,74 @@ var JC = jConcise = (function(){
 			FORMAT_TYPE_DATETIME: 'yyyy-MM-dd HH:mm:ss',
 			
 			/**
+			 * 检测年份值是否合法
+			 * @param {Number} y
+			 */
+			isRightYear: function(y){
+				y = parseInt(y);
+				if(JC.isNumber(y)){
+					if(y >= 1 && y <= 9999) return true;
+				}
+				return false;
+			},
+			/**
+			 * 检测月份值是否合法
+			 * @param {Number} m
+			 */
+			isRightMonth: function(m){
+				m = parseInt(m);
+				if(JC.isNumber(m)){
+					if(m >= 1 && m <= 12) return true;
+				}
+				return false;
+			},
+			/**
+			 * 检测小时值是否合法
+			 * @param {Number} h
+			 */
+			isRightHour: function(h){
+				h = parseInt(h);
+				if(JC.isNumber(h)){
+					if(h >= 1 && h <= 24) return true;
+				}
+				return false;
+			},
+			/**
+			 * 检测分钟值是否合法
+			 * @param {Number} m
+			 */
+			isRightMinutes: function(m){
+				m = parseInt(m);
+				if(JC.isNumber(m)){
+					if(m >= 1 && m <= 60) return true;
+				}
+				return false;
+			},
+			/**
+			 * 检测秒值是否合法
+			 * @param {Number} s
+			 */
+			isRightSeconds: function(s){
+				s = parseInt(s);
+				if(JC.isNumber(s)){
+					if(s >= 1 && s <= 60) return true;
+				}
+				return false;
+			},
+			/**
+			 * 检测毫秒值是否合法
+			 * @param {Number} ms
+			 */
+			isRightMilliseconds: function(ms){
+				ms = parseInt(ms);
+				if(JC.isNumber(ms)){
+					if(ms >= 1 && ms <= 999) return true;
+				}
+				return false;
+			},
+			
+			
+			/**
 			 * 补零，如果入参是大于等于0且小于等于10的数字，前置补零（默认）
 			 * 可以根据Boolean型参follow的值，进行后置补零
 			 * @param {Number} num
@@ -836,6 +919,9 @@ var JC = jConcise = (function(){
 			formatDate: function(style, date){
 				if(JC.Regular.nonsense(date) || !JC.isDate(date)){
 					date = new Date();
+				}
+				if(JC.Regular.nonsense(style) || !JC.isString(style)){
+					style = this.FORMAT_TYPE_DATETIME;
 				}
 				
 				var dateStr = style.replace(/yyyy|yy|MM|dd|HH|mm|ss|ms/g, function(s){
@@ -909,13 +995,12 @@ var JC = jConcise = (function(){
 			 */
 			getRandomDateByRange: function(start, end){
 				if(!(JC.isDates([start, end]) && end >= start)){
-					console.log('me');
 					return new Date();
 				}
 				
 				var startMilliTime = start.getTime();
 				var td = end.getTime() - startMilliTime;
-				return new Date(startMilliTime + parseInt(Math.random() * td));
+				return new Date(startMilliTime + JC.Math.getRandomNum(td));
 			},
 			/**
 			 * 获得一个指定时间区域的随机时间字符串
@@ -933,6 +1018,74 @@ var JC = jConcise = (function(){
 					style,
 					this.getRandomDateByRange(start, end)
 				);
+			},
+			/**
+			 * 以当前系统时间为基准，指定一个时间偏移量，获取一个该偏移量内的随机时间对象
+			 * @param {String} offset
+			 */
+			getRandomDateByNow: function(offset){
+				var now = new Date();
+				if(!JC.isString(offset)){
+					return now;
+				}
+				
+				var nowTimes = now.getTime();
+				var start = new Date(nowTimes);
+				var end = new Date(nowTimes);
+				var i_y = i_M = i_d = i_H = i_m = i_s = 0;
+				offset.replace(/[+-]?\d*(\.\d+)?y|[+-]?\d*(\.\d+)?M|[+-]?\d*(\.\d+)?d|[+-]?\d*(\.\d+)?H|[+-]?\d*(\.\d+)?m|[+-]?\d*(\.\d+)?s/g, function(c){
+					var unit = c.charAt(c.length - 1);
+					switch(unit){
+					case 'y': 
+						var year = c.slice(0, c.length - 1);
+						if(JC.Math.isPositiveInteger(year)) i_y = parseInt(year);
+					case 'M':
+						break;
+						var month = c.slice(0, c.length - 1);
+						if(JC.Math.isPositiveInteger(month)) i_M = parseInt(month);
+						break;
+					case 'd':
+						var day = c.slice(0, c.length - 1);
+						if(JC.Math.isPositiveInteger(day)) i_d = parseInt(day);
+						break;
+					case 'H':
+						var hour = c.slice(0, c.length - 1);
+						if(JC.Math.isPositiveInteger(hour)) i_H = parseInt(hour);
+						break;
+					case 'm':
+						var minutes = c.slice(0, c.length - 1);
+						if(JC.Math.isPositiveInteger(minutes)) i_m = parseInt(minutes);
+						break;
+					case 's':
+						var seconds = c.slice(0, c.length - 1);
+						if(JC.Math.isPositiveInteger(seconds)) i_s = parseInt(seconds);
+						break;
+					}
+				});
+				
+				start.setFullYear(start.getFullYear() - i_y);
+				start.setMonth(start.getMonth() - i_M);
+				start.setDate(start.getDate() - i_d);
+				start.setHours(start.getHours() - i_H);
+				start.setMinutes(start.getMinutes() - i_m);
+				start.setSeconds(start.getSeconds() - i_s);
+				
+				end.setFullYear(end.getFullYear() + i_y);
+				end.setMonth(end.getMonth() + i_M);
+				end.setDate(end.getDate() + i_d);
+				end.setHours(end.getHours() + i_H);
+				end.setMinutes(end.getMinutes() + i_m);
+				end.setSeconds(end.getSeconds() + i_s);
+				
+				return this.getRandomDateByRange(start, end);
+			},
+			/**
+			 * 以当前系统时间为基准，指定一个时间偏移量，获取一个该偏移量内的随机时间字符串
+			 * @param {String} offset
+			 * @param {String} style
+			 */
+			getRandomDateStrByNow: function(offset, style){
+				return this.formatDate(style, this.getRandomDateByNow(offset));
 			}
 			
 			
@@ -1016,11 +1169,28 @@ var JC = jConcise = (function(){
 		 */
 		Regular: {
 			/**
-			 * 检查入参是否为无实际意义的参数，包括null和undefined
+			 * 检查入参是否为无实际意义的参数（null或undefined）
 			 * @param {Object} obj
 			 */
 			nonsense: function(obj){
 				if(obj === null || obj === undefined) return true;
+				return false;
+			},
+			/**
+			 * 检查入参数组中的元素是否全为无实际意义的参数（null或undefined）
+			 * @param {Object} arr
+			 */
+			nonsenses: function(arr){
+				if(JC.isArray(arr)){
+					for(var i in arr){
+						if(!JC.Regular.nonsense(arr[i])){
+							return false;
+						}
+					}
+					return true;
+				}else{
+					return this.nonsense(arr);
+				}
 			},
 			/**
 			 * 去除字符串中的非法字符
@@ -1047,7 +1217,7 @@ var JC = jConcise = (function(){
 			 * @param {Object} obj
 			 */
 			testNumber: function(obj){
-				return /^[+-]?\d*\.?(\d+)?$/.test(obj);
+				return /^[+-]?\d*(\.\d+)?$/.test(obj);
 			}
 		}
 		

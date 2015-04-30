@@ -56,6 +56,7 @@ button:active {
 	<button name="basicFuncBtn" onclick="getPageWidthHeight();">获得网页内容总宽高值</button>
 	<button name="basicFuncBtn" onclick="getScrolledWidthHeight();">获得网页被卷去的高宽值</button>
 	<button name="basicFuncBtn" onclick="checkObjType();">检查对象类型</button>
+	<button name="basicFuncBtn" onclick="getRandomColor();">获得随机颜色</button>
 	
 	<!-- 选择器演示 -->
 	<h2>Selector</h2>
@@ -139,6 +140,9 @@ function checkObjType(){
 	console.log(JC.isArray(arr));
 	
 }
+function getRandomColor(){
+	statusBar.innerText = JC.getRandomColor();
+}
 
 // 数学工具方法
 function getUUID(){
@@ -159,19 +163,13 @@ function unitConvert(){
 
 // 数组工具方法
 function sumArray(){
-	JC.Array.sum([1.,2,3,'4',5]);
+	statusBar.innerText = JC.Array.sum([1.,.2,3,'4',5]);
 }
 
 // 时间工具方法
 function getCustomDate(){
-//	statusBar.innerText = JC.Date.setCurrentTime('99-9-23,14:56:19');
-	var end = new Date('2015/10/25,12:45:23');
-	console.log(end);
 	var now = new Date();
-	console.log(now);
-	var df = end.getTime() - now.getTime();
-	console.log(df);
-	statusBar.innerText = parseInt((df/(60*60*1000))%24);
+	statusBar.innerText = JC.Date.getRandomDateStrByRange(now, new Date(now.getTime() + 254697512358), JC.Date.FORMAT_TYPE_DATETIME);
 }
 
 
@@ -181,8 +179,6 @@ function getBrowserInfo(){
 	var version = JC.Browser.getVersion();
 	statusBar.innerText = 'Name: ' + name + ', Version: ' + version;
 }
-
-
 
 
 
