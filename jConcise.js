@@ -878,6 +878,7 @@ var JC = jConcise = (function(){
 			
 			/**
 			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间对象
+			 * @return {Date}
 			 */
 			getRandomDate: function(){
 				return this.getRandomDateByRange(new Date(GCP.Date.maxMilliTime), new Date(GCP.Date.minMilliTime));
@@ -886,6 +887,7 @@ var JC = jConcise = (function(){
 			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间字符串
 			 * 可以指定时间字符串的样式
 			 * @param {String} style
+			 * @return {String}
 			 */
 			getRandomDateStr: function(style){
 				if(JC.Regular.nonsense(style) || !JC.isString(style)){
@@ -900,13 +902,37 @@ var JC = jConcise = (function(){
 			
 			/**
 			 * 获得一个指定时间区域内的随机时间
+			 * 如果入参并非都是Date对象，或者截止时间小于起始时间，则返回当前时间
 			 * @param {Date} start
 			 * @param {Date} end
+			 * @return {Date}
 			 */
 			getRandomDateByRange: function(start, end){
+				if(!(JC.isDates([start, end]) && end >= start)){
+					console.log('me');
+					return new Date();
+				}
+				
 				var startMilliTime = start.getTime();
 				var td = end.getTime() - startMilliTime;
 				return new Date(startMilliTime + parseInt(Math.random() * td));
+			},
+			/**
+			 * 获得一个指定时间区域的随机时间字符串
+			 * @param {Date} start
+			 * @param {Date} end
+			 * @param {String} style
+			 * @return {String}
+			 */
+			getRandomDateStrByRange: function(start, end, style){
+				if(JC.Regular.nonsense(style) || !JC.isString(style)){
+					style = this.FORMAT_TYPE_DATETIME;
+				}
+				
+				return this.formatDate(
+					style,
+					this.getRandomDateByRange(start, end)
+				);
 			}
 			
 			
