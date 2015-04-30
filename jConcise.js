@@ -355,6 +355,17 @@ var JC = jConcise = (function(){
 				func();
 			}
 		},
+		/**
+		 * 生成随机颜色字符串
+		 * @return {String} 颜色字符串
+		 */
+		getRandomColor: function(){
+			var color = '#';
+			JC.loop(function(){
+				color += JC.Math.HDOB(parseInt(Math.random() * 16), 10, 16);
+			}, 6);
+			return color;
+		},
 		
 		
 		// BasicFunction		----------> End
