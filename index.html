@@ -41,7 +41,27 @@ button:active {
 </style>
 <script type="text/javascript" src="./jConcise.js"></script>
 <script type="text/javascript">
+var obj1 = {
+	name: 'alice',
+	age: 18,
+	mate: {
+		name: 'alex',
+		age: 20
+	}
+};
+var obj2 = {};
+var obj3 = {
+	name: 'alice',
+	age: 18,
+	mate: {
+		name: 'admin',
+		age: 20
+	}
+};
 
+var arr1 = [1,2.2,3,'4',null,undefined];
+
+console.log(JC.Object.equals(obj1, obj3));
 </script>
 </head>
 

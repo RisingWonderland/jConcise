@@ -3,9 +3,11 @@
  * 基础功能：	BasicFunction
  * 选择器：		Selecter
  * 组件：		Component
+ * 基础方法：	Common
  * 字符串方法：	String
  * 数学方法：	Math
  * 数组方法：	Array
+ * 对象方法：	Object
  * 时间方法：	Date
  * 浏览器：		Browser
  * 规则、正则或合法性检查：	Regular
@@ -71,48 +73,11 @@ var JC = jConcise = (function(){
 		},
 		
 		/**
-		 * 遍历对象
-		 * @param {Object} obj 可遍历的对象String、Array、Object
-		 * @param {Object} func 遍历到每个元素后执行的方法，接收当前被遍历的元素
-		 */
-		iteration: function(obj, func){
-			for(var i in obj){
-				func(obj[i]);
-			}
-		},
-		
-		/**
-		 * 判断入参是否为数组
-		 * @param {Object} obj 要检查的内容
-		 */
-		isArray: function(obj){
-			if(this.Regular.nonsense(obj)) return false;
-			if(typeof obj === 'object' && obj.constructor === Array){
-				return true;
-			}
-			return false;
-		},
-		/**
-		 * 判断入参数组内的元素是否都为数组
-		 * @param {Object} arr
-		 */
-		isArrays: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isArray(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}
-			return false;
-		},
-		/**
 		 * 判断入参是否为数字
 		 * @param {Object} obj 要检查的内容
 		 */
 		isNumber: function(obj){
-			if(this.Regular.nonsense(obj)) return false;
+			if(this.isVoid(obj)) return false;
 			if(typeof obj === 'number' && obj.constructor === Number){
 				return true;
 			}
@@ -139,7 +104,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isBoolean: function(obj){
-			if(this.Regular.nonsense(obj)) return false;
+			if(this.isVoid(obj)) return false;
 //			if(this.isArray())
 			
 			if(typeof obj === 'boolean' && obj.constructor === Boolean){
@@ -168,7 +133,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isDate: function(obj){
-			if(this.Regular.nonsense(obj)) return false;
+			if(this.isVoid(obj)) return false;
 			if(typeof obj === 'object' && obj.constructor === Date){
 				return true;
 			}
@@ -195,7 +160,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isString: function(obj){
-			if(this.Regular.nonsense(obj)) return false;
+			if(this.isVoid(obj)) return false;
 			if(typeof obj === 'string' && obj.constructor === String){
 				return true;
 			}
@@ -222,7 +187,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isFunction: function(obj){
-			if(this.Regular.nonsense(obj)) return false;
+			if(this.isVoid(obj)) return false;
 			if(typeof obj === 'function' && obj.constructor === Function){
 				return true;
 			}
@@ -249,7 +214,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isRegExp: function(obj){
-			if(this.Regular.nonsense(obj)) return false;
+			if(this.isVoid(obj)) return false;
 			if(typeof obj === 'object' && obj.constructor === RegExp){
 				return true;
 			}
@@ -272,11 +237,37 @@ var JC = jConcise = (function(){
 			}
 		},
 		/**
+		 * 判断入参是否为数组
+		 * @param {Object} obj 要检查的内容
+		 */
+		isArray: function(obj){
+			if(this.isVoid(obj)) return false;
+			if(typeof obj === 'object' && obj.constructor === Array){
+				return true;
+			}
+			return false;
+		},
+		/**
+		 * 判断入参数组内的元素是否都为数组
+		 * @param {Object} arr
+		 */
+		isArrays: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isArray(arr[i])){
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		},
+		/**
 		 * 判断入参是否为Object对象
 		 * @param {Object} obj
 		 */
 		isObject: function(obj){
-			if(this.Regular.nonsense(obj)) return false;
+			if(this.isVoid(obj)) return false;
 			if(typeof obj === 'object' && obj.constructor === Object){
 				return true;
 			}
@@ -299,98 +290,58 @@ var JC = jConcise = (function(){
 			}
 		},
 		
-		
 		/**
-		 * 以name - value的形式，log输出一个对象
-		 * @param {Object} obj 要遍历输出的对象
-		 * @param {Boolean} execFunc 是否执行对象中的方法
+		 * 判断入参的类型是否相同
+		 * @param {Object} obj1
+		 * @param {Object} obj2
+		 * @return {Boolean} true, same type; false, different type.
 		 */
-		logObj: function(obj, execFunc){
-			if(!JC.isBoolean(execFunc)) execFunc = false;
-			
-			for(var name in obj){
-				if(this.isFunction(obj[name]) && execFunc == true){
-					obj[name]();
-				}else{
-					console.log(name + ': ' + obj[name]);
-				}
-			}
-		},
-		/**
-		 * 遍历一个对象，针对其中的元素执行某方法
-		 * @param {Object} obj
-		 * @param {Object} func
-		 */
-		loopObj: function(obj, func){
-			if(!(obj.length >= 0 && JC.isFunction(func))) return;
-			
-			for(var name in obj){
-				func(obj[name]);
-			}
-		},
-		/**
-		 * 循环执行某方法一定次数
-		 * @param {Function} 要执行的方法
-		 * @param {Number} 执行次数
-		 */
-		loop: function(func, num){
-			if(!JC.isFunction(func)) return;
-			if(!JC.isNumber(num) || num < 0) num = 0;
-			
-			for(var i=0;i < num;i++){
-				func();
-			}
+		isSameType: function(obj1, obj2) {
+			if (typeof obj1 === typeof obj2 && obj1.constructor === obj2.constructor) return true;
+			return false;
 		},
 		
 		/**
-		 * 判断一个对象是否在一个容器中
-		 * @param {Object} container
+		 * 检查入参是否为无实际意义的参数（null或undefined）
 		 * @param {Object} obj
 		 */
-		contains: function(container, obj){
-			if(JC.Regular.nonsense(container)) return false;
-			if(JC.isArray(container) || JC.isObject(container)){
-				for(var key in container){
-					if(container[key] === obj){
-						return true;
-					}
-				}
-			}else if(JC.isString(container)){
-				if(container.indexOf(obj) !== -1){
-					return true;
-				}
+		isVoid: function(obj) {
+			if (obj === null || obj === undefined) return true;
+			return false;
+		},
+		/**
+		 * 检查所有入参是否均为无实际意义的参数（null或undefined）
+		 */
+		isVoids: function() {
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!this.isVoid(arguments[i])) return false;
+			}
+			return true;
+		},
+		/**
+		 * 检查所有入参中是否存在无实际意义的参数（null或undefined）
+		 */
+		isVoidIn: function(){
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (this.isVoid(arguments[i])) return true;
 			}
 			return false;
 		},
 		/**
-		 * 去除对象中的重复数据，目前支持字符串、数组
-		 * @param {Object} obj 
+		 * 检查入参是否为空值，空值包括：
+		 * null
+		 * undefined
+		 * 空字符串
+		 * 空字符串
+		 * 空数组
+		 * 空对象
+		 * @param {Object} obj
 		 */
-		distinct: function(obj){
-			if(JC.isString(obj) || JC.isArray(obj)){
-				var arr = [];
-				for(var key in obj){
-					if(!JC.contains(arr, obj[key])){
-						arr.push(obj[key]);
-					}
-				}
-				if(JC.isString(obj)){
-					return arr.join('');
-				}
-				return arr;
-			}
-			return obj;
-		},
-		/**
-		 * 生成随机颜色字符串
-		 * @return {String} 颜色字符串
-		 */
-		getRandomColor: function(){
-			var color = '#';
-			JC.loop(function(){
-				color += JC.Math.HDOB(JC.Math.getRandomNum(16), 10, 16);
-			}, 6);
-			return color;
+		isEmpty: function(obj) {
+			if (this.isVoid(obj) || obj === '') return true;
+			if (this.isArray(obj) && obj.length == 0) return true;
+			if (this.isObject(obj) && this.Object.getSize(obj) == 0) return true;
+			return false;
 		},
 		
 		
@@ -447,6 +398,111 @@ var JC = jConcise = (function(){
 		
 		
 		// Selecter				----------> End
+		
+		
+		
+		
+		
+		// String				----------> Begin
+		Common: {
+			/**
+			 * 以name - value的形式，log输出一个对象
+			 * @param {Object} obj 要遍历输出的对象
+			 * @param {Boolean} execFunc 是否执行对象中的方法
+			 */
+			logObj: function(obj, execFunc){
+				if(!JC.isBoolean(execFunc)) execFunc = false;
+				
+				for(var name in obj){
+					if(this.isFunction(obj[name]) && execFunc == true){
+						obj[name]();
+					}else{
+						console.log(name + ': ' + obj[name]);
+					}
+				}
+			},
+			/**
+			 * 遍历一个对象，针对其中的元素执行某方法
+			 * @param {Object} obj 可遍历的对象String、Array、Object
+			 * @param {Object} func 遍历到每个元素后执行的方法，接收当前被遍历的元素
+			 */
+			loopObj: function(obj, func){
+				if(!JC.isFunction(func)) return;
+				
+				for(var key in obj){
+					func(obj[key]);
+				}
+			},
+			/**
+			 * 循环执行某方法一定次数
+			 * @param {Function} 要执行的方法
+			 * @param {Number} 执行次数
+			 */
+			loopFn: function(func, num){
+				if(!JC.isFunction(func)) return;
+				if(!JC.isNumber(num) || num < 0) num = 0;
+				
+				for(var i=0;i < num;i++){
+					func();
+				}
+			},
+			
+			/**
+			 * 判断一个对象是否在一个容器中
+			 * @param {Object} container
+			 * @param {Object} obj
+			 */
+			contains: function(container, obj){
+				if(JS.isVoid(container)) return false;
+				if(JC.isArray(container) || JC.isObject(container)){
+					for(var key in container){
+						if(container[key] === obj){
+							return true;
+						}
+					}
+				}else if(JC.isString(container)){
+					if(container.indexOf(obj) !== -1){
+						return true;
+					}
+				}
+				return false;
+			},
+			/**
+			 * 去除对象中的重复数据，目前支持字符串、数组
+			 * @param {Object} obj 
+			 */
+			distinct: function(obj){
+				if(JC.isString(obj) || JC.isArray(obj)){
+					var arr = [];
+					for(var key in obj){
+						if(!JC.contains(arr, obj[key])){
+							arr.push(obj[key]);
+						}
+					}
+					if(JC.isString(obj)){
+						return arr.join('');
+					}
+					return arr;
+				}
+				return obj;
+			},
+			/**
+			 * 生成随机颜色字符串
+			 * @return {String} 颜色字符串
+			 */
+			getRandomColor: function(){
+				var color = '#';
+				JC.loopFn(function(){
+					color += JC.Math.HDOB(JC.Math.getRandomNum(16), 10, 16);
+				}, 6);
+				return color;
+			},
+		},
+				
+		
+		
+		
+		// String				----------> End
 		
 		
 		
@@ -516,7 +572,7 @@ var JC = jConcise = (function(){
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			sum: function(arr, strict){
-				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var sum = 0;
@@ -537,7 +593,7 @@ var JC = jConcise = (function(){
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			avg: function(arr, strict){
-				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var VALID_NUM = 0;
@@ -561,7 +617,7 @@ var JC = jConcise = (function(){
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			min: function(arr, strict){
-				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var min = null;
@@ -585,7 +641,7 @@ var JC = jConcise = (function(){
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			max: function(arr, strict){
-				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var max = null;
@@ -610,7 +666,7 @@ var JC = jConcise = (function(){
 			 * @param {Array} 一个包含两个元素的数组，元素1是最小值，元素2是最大值
 			 */
 			extreme: function(arr, strict){
-				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var min = null;
@@ -646,9 +702,10 @@ var JC = jConcise = (function(){
 				if(!JC.isNumber(exp)){
 					exp = 1;
 				}
-				if(JC.Regular.nonsense(strict) || !JC.isBoolean(strict)){
+				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
-				}if(JC.Regular.nonsense(returnAll) || !JC.isBoolean(returnAll)){
+				}
+				if(JS.isVoid(returnAll) || !JC.isBoolean(returnAll)){
 					returnAll = true;
 				}
 				
@@ -664,13 +721,194 @@ var JC = jConcise = (function(){
 					}
 				}
 				return newArr;
+			},
+			/**
+			 * 判断指定数组中是否包含目标值
+			 * @param {Array} arr
+			 * @param {Object} key
+			 * @return {Boolean} true，如果包含；false，如果不包含。
+			 */
+			contains: function(arr, value) {
+				if (JC.isVoid(arr) || !JC.isArray(arr)) {
+					throw new Error('[JC - Array]Invalid parameter: null, undefined or not an array.');
+				}
+				// if missing the second parameter, show error info.
+				if (arguments.length <= 1) {
+					throw new Error('[JC - Array]Missing parameter: your second parameter is missing.');
+				}
+				
+				for (var i = 0, l = arr.length;i < l;i++) {
+					if (arr[i] === value) {
+						return true;
+					}
+				}
+				return false;
+			},
+			/**
+			 * 判断接收到的两个数组是否内容相同
+			 * @param {Array} arr1
+			 * @param {Array} arr2
+			 */
+			equals: function(arr1, arr2) {
+				if (JC.isVoidIn(arr1, arr2) || !JC.isArray(arr1) || !JC.isArray(arr2)) {
+					throw new Error('[JC - Array]Invalid parameter: null, undefined or not an array.');
+				}
+				
+				if (arr1 == arr2) return true;
+				
+				if (arr1.length != arr2.length) {
+					return false;
+				} else {
+					for (var i = 0, l = arr1.length;i < l;i++) {
+						if (arr1[i] != arr2[i]) return false;
+					}
+					return true;
+				}
+				return true;
+			},
+			/**
+			 * 清空入参数组
+			 */
+			clear: function() {
+				for (var i = 0, l = arguments.length;i < l;i++) {
+					var tObj = arguments[i];
+					if (!JC.isVoid(tObj) && JC.isArray(tObj)) {
+						tObj.splice(0, tObj.length);
+					}
+				}
+			},
+			/**
+			 * 将类数组对象转换为数组
+			 * @param {Object} obj
+			 */
+			convertFromArrayLike: function(obj) {
+				if (JC.isVoid(obj)) {
+					throw new Error('[JC - Array]Invalid parameter: null or undefined.');
+				}
+				
+				return [].slice.call(obj);
 			}
-			
-			
+		},
+		
+		// Array				----------> End
+		
+		
+		
+		
+		
+		// Object				----------> Begin
+		Object: {
+			/**
+			 * 获得对象的大小
+			 * @param {Object} obj
+			 */
+			getSize: function(obj) {
+				if (JC.isVoid(obj)) {
+					throw new Error('[JC - Object]Invalid parameter: null or undefined.');
+				}
+				if (!JC.isObject(obj)) {
+					throw new Error('[JC - Object]Invalid parameter: not an object.');
+				}
+				return Object.keys(obj).length;
+			},
+			/**
+			 * 克隆目标对象
+			 * @param {Object} obj
+			 */
+			clone: function(obj) {
+				if (JC.isVoid(obj)) {
+					throw new Error('[JC - Object]Invalid parameter: null or undefined.');
+				}
+				if (!JC.isObject(obj)) {
+					throw new Error('[JC - Object]Invalid parameter: not an object.');
+				}
+				
+				var O = new Object();
+				for (var key in obj) {
+					if (JC.isObject(obj[key])) {
+						O[key] = this.clone(obj[key]);
+					} else {
+						O[key] = obj[key];
+					}
+				}
+				return O;
+			},
+			/**
+			 * 判断某对象中是否包含指定的键。
+			 * @param {Object} obj
+			 * @param {Object} key
+			 * @return {Boolean} true，如果包含；false，如果不包含。
+			 */
+			contains: function(obj, key) {
+				if (JC.isVoid(obj) || !JC.isObject(obj)) {
+					throw new Error('[JC - Object]Invalid parameter: null, undefined or not an object.');
+				}
+				// if missing the second parameter, show error info.
+				if (arguments.length <= 1) {
+					throw new Error('[JC - Object]Missing parameter: your second parameter is missing.');
+				}
+				
+				return JC.Array.contains(Object.keys(obj), key);
+			},
+			/**
+			 * 判断两个入参对象是否相等。该方法不统计继承的属性。
+			 * 该方法会在以下情况认为两者完全相等：
+			 * 两者都是对象，且指向相同引用；
+			 * 两者都是对象，且完全相等；
+			 * 两者都是null；
+			 * 两者都是undefined。
+			 * @param {Object} obj1
+			 * @param {Object} obj2
+			 */
+			equals: function(obj1, obj2) {
+				if (JC.isVoidIn(obj1, obj2)) {
+					throw new Error('[JC - Object]Invalid parameter: null or undefined.');
+				}
+				if (!JC.isObject(obj1) || !JC.isObject(obj2)) {
+					throw new Error('[JC - Object]Invalid parameter: not an object.');
+				}
+				
+				if (this.getSize(obj1) != this.getSize(obj2)) return false;
+				
+				for (var key in obj1) {
+					if (obj1.hasOwnProperty(key)) {
+						if (!this.contains(obj2, key)) {
+							return false;
+						} else {
+							if (!JC.isSameType(obj1[key], obj2[key])) {
+								return false;
+							} else {
+								var value1 = obj1[key];
+								var value2 = obj2[key];
+								if (JC.isArray(value1)) {
+									if (!JC.Array.equals(value1, value2)) {
+										return false;
+									}
+								} else if (JC.isObject(value1)) {
+									if (!JC.Object.equals(value1, value2)) {
+										return false;
+									}
+								} else {
+									if (value1 != value2) {
+										return false;
+									}
+								}
+							}
+						}
+					}
+				}
+				return true;
+			}
 		},
 		
 		
-		// Array				----------> End
+		
+		
+		
+		// Object				----------> End
+		
+		
+		
 		
 		
 		
@@ -929,10 +1167,10 @@ var JC = jConcise = (function(){
 			 * @param {Date} date 要格式化的时间，如果该值不是Date类型，或者为null，使用系统当前时间
 			 */
 			formatDate: function(style, date){
-				if(JC.Regular.nonsense(date) || !JC.isDate(date)){
+				if(JS.isVoid(date) || !JC.isDate(date)){
 					date = new Date();
 				}
-				if(JC.Regular.nonsense(style) || !JC.isString(style)){
+				if(JS.isVoid(style) || !JC.isString(style)){
 					style = this.FORMAT_TYPE_DATETIME;
 				}
 				
@@ -988,7 +1226,7 @@ var JC = jConcise = (function(){
 			 * @return {String}
 			 */
 			getRandomDateStr: function(style){
-				if(JC.Regular.nonsense(style) || !JC.isString(style)){
+				if(JS.isVoid(style) || !JC.isString(style)){
 					style = this.FORMAT_TYPE_DATETIME;
 				}
 				
@@ -1022,7 +1260,7 @@ var JC = jConcise = (function(){
 			 * @return {String}
 			 */
 			getRandomDateStrByRange: function(start, end, style){
-				if(JC.Regular.nonsense(style) || !JC.isString(style)){
+				if(JS.isVoid(style) || !JC.isString(style)){
 					style = this.FORMAT_TYPE_DATETIME;
 				}
 				
@@ -1049,7 +1287,7 @@ var JC = jConcise = (function(){
 				size = parseInt(size);
 				
 				var arr = [];
-				JC.loop(function(){
+				JC.loopFn(function(){
 					arr.push(JC.Date.getRandomDateByRange(start, end));
 				}, size);
 				
@@ -1156,7 +1394,7 @@ var JC = jConcise = (function(){
 				size = parseInt(size);
 				
 				var arr = [];
-				JC.loop(function(){
+				JC.loopFn(function(){
 					arr.push(JC.Date.getRandomDateByNow(offset));
 				}, size);
 				
@@ -1264,30 +1502,6 @@ var JC = jConcise = (function(){
 		 * 规则、正则或合法性检查
 		 */
 		Regular: {
-			/**
-			 * 检查入参是否为无实际意义的参数（null或undefined）
-			 * @param {Object} obj
-			 */
-			nonsense: function(obj){
-				if(obj === null || obj === undefined) return true;
-				return false;
-			},
-			/**
-			 * 检查入参数组中的元素是否全为无实际意义的参数（null或undefined）
-			 * @param {Object} arr
-			 */
-			nonsenses: function(arr){
-				if(JC.isArray(arr)){
-					for(var i in arr){
-						if(!JC.Regular.nonsense(arr[i])){
-							return false;
-						}
-					}
-					return true;
-				}else{
-					return this.nonsense(arr);
-				}
-			},
 			/**
 			 * 去除字符串中的非法字符
 			 * @param {Object} str
