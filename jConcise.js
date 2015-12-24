@@ -289,6 +289,23 @@ var JC = jConcise = (function(){
 				return this.isObject(arr);
 			}
 		},
+		/**
+		 * 判断对象是否是原始数据类型的数据。
+		 * @param {Object} obj
+		 */
+		isPrimitiveDataType: function(obj) {
+			if (this.isVoid(obj) || this.isNumber() || this.isBoolean() || this.isString()) {
+				return true;
+			}
+			return false;
+		},
+		/**
+		 * 判断对象是否是对象数据类型、非原始数据类型的数据。
+		 * @param {Object} obj
+		 */
+		isObjectDataType: function(obj) {
+			return !this.isPrimitiveDataType(obj);
+		},
 		
 		/**
 		 * 判断入参的类型是否相同
@@ -453,7 +470,7 @@ var JC = jConcise = (function(){
 			 * @param {Object} obj
 			 */
 			contains: function(container, obj){
-				if(JS.isVoid(container)) return false;
+				if(JC.isVoid(container)) return false;
 				if(JC.isArray(container) || JC.isObject(container)){
 					for(var key in container){
 						if(container[key] === obj){
@@ -492,11 +509,33 @@ var JC = jConcise = (function(){
 			 */
 			getRandomColor: function(){
 				var color = '#';
-				JC.loopFn(function(){
+				JC.Common.loopFn(function(){
 					color += JC.Math.HDOB(JC.Math.getRandomNum(16), 10, 16);
 				}, 6);
 				return color;
 			},
+			/**
+			 * 克隆一个数据。如果目标数据属于对象类型，不克隆继承的属性。
+			 * @param {Object} obj
+			 */
+			clone: function(obj) {
+				// 不克隆函数
+				if (this.isFunction(obj)) {
+					throw new Error('[JC - Common]Invalid parameter: function');
+				}
+				
+				// 克隆：Date, ArrayObject, 
+				if (!this.isPrimitiveDataType(obj) || !this.isRegExp(obj)) {
+					if (this.isDate(obj)) {
+						return new Date(obj.getTime());
+					} else if (this.isArrays(obj)) {
+						return [].slice.call(obj);
+					} else if (this.isObject(obj)) {
+						return JC.Object.clone(obj);
+					}
+				}
+				return obj;
+			}
 		},
 				
 		
@@ -553,6 +592,20 @@ var JC = jConcise = (function(){
 			 */
 			getNaNStr: function(str){
 				return this.getNaN(str).join('');
+			},
+			/**
+			 * 判断接收到的字符串的内容是否可作为纯数字，是否可完全转换为数字。
+			 * @param {Object} str
+			 * @return {Boolean} if true, then all number; if false, then not all number
+			 */
+			isStrIsNum: function(str) {
+				if (JC.isVoid(str) || !JC.isString(str)) {
+					throw new Error('[JC - String]Invalid parameter: null, undefined or not string.');
+				}
+				
+				var tN = Number(str);
+				if (!isNaN(tN)) return true;
+				return false;
 			}
 		},
 		
@@ -572,7 +625,7 @@ var JC = jConcise = (function(){
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			sum: function(arr, strict){
-				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
+				if(JC.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var sum = 0;
@@ -593,7 +646,7 @@ var JC = jConcise = (function(){
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			avg: function(arr, strict){
-				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
+				if(JC.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var VALID_NUM = 0;
@@ -617,7 +670,7 @@ var JC = jConcise = (function(){
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			min: function(arr, strict){
-				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
+				if(JC.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var min = null;
@@ -641,7 +694,7 @@ var JC = jConcise = (function(){
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			max: function(arr, strict){
-				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
+				if(JC.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var max = null;
@@ -666,7 +719,7 @@ var JC = jConcise = (function(){
 			 * @param {Array} 一个包含两个元素的数组，元素1是最小值，元素2是最大值
 			 */
 			extreme: function(arr, strict){
-				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
+				if(JC.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
 				var min = null;
@@ -702,10 +755,10 @@ var JC = jConcise = (function(){
 				if(!JC.isNumber(exp)){
 					exp = 1;
 				}
-				if(JS.isVoid(strict) || !JC.isBoolean(strict)){
+				if(JC.isVoid(strict) || !JC.isBoolean(strict)){
 					strict = true;
 				}
-				if(JS.isVoid(returnAll) || !JC.isBoolean(returnAll)){
+				if(JC.isVoid(returnAll) || !JC.isBoolean(returnAll)){
 					returnAll = true;
 				}
 				
@@ -787,6 +840,48 @@ var JC = jConcise = (function(){
 				}
 				
 				return [].slice.call(obj);
+			},
+			/**
+			 * 获得第一个符合条件的对象在数组中的索引，如果数组中没有符合条件对象，返回-1。
+			 * 该方法不涉及任何对象的继承属性。
+			 * @param {Object} arr
+			 * @param {Object} obj
+			 * @return {Boolean} -1, no eligible object; >= 0, the index of eligible object.
+			 */
+			getIndexOfEligibleObj: function(arr, obj) {
+				// 第二入参必须存在
+				if (arguments.length < 2) {
+					throw new Error('[JC - Array]Missing parameter: your second parameter is missing.');
+				}
+				
+				// 入参合法性验证
+				if (JC.isVoidIn(arr, obj)) {
+					throw new Error('[JC - Array]Invalid parameter: null or undefined.');
+				}
+				if (!JC.isArray(arr)) {
+					throw new Error('[JC - Array]Invalid parameter: not an array.');
+				}
+				if (!JC.isObject(obj)) {
+					throw new Error('[JC - Array]Invalid parameter: not an object.');
+				}
+				
+				for (var i = 0, l = arr.length;i < l;i++) {
+					var tObj = arr[i];
+					if (JC.isObject(tObj)) {
+						var flag = true;
+						// 以入参对象为基准，数组中要检查的对象必须包含入参对象中的全部键值
+						for (var key in obj) {
+							if (obj.hasOwnProperty(key)) {
+								if (!(tObj.hasOwnProperty(key) && obj[key] == tObj[key])) {
+									flag = false;
+									break;
+								}
+							}
+						}
+						if (flag == true) return i;
+					}
+				}
+				return -1;
 			}
 		},
 		
@@ -823,15 +918,15 @@ var JC = jConcise = (function(){
 					throw new Error('[JC - Object]Invalid parameter: not an object.');
 				}
 				
-				var O = new Object();
+				var tObj = new Object();
 				for (var key in obj) {
 					if (JC.isObject(obj[key])) {
-						O[key] = this.clone(obj[key]);
+						tObj[key] = this.clone(obj[key]);
 					} else {
-						O[key] = obj[key];
+						tObj[key] = obj[key];
 					}
 				}
-				return O;
+				return tObj;
 			},
 			/**
 			 * 判断某对象中是否包含指定的键。
@@ -898,6 +993,23 @@ var JC = jConcise = (function(){
 					}
 				}
 				return true;
+			},
+			/**
+			 * 简单粗暴的合并多个对象，返回新生成的对象。如果多个对象中存在相同的键，后者键值替代前者键值。
+			 */
+			mergeByRude: function() {
+				var obj = {};
+				
+				for (var i = 0, l = arguments.length;i < l;i++) {
+					var tObj = arguments[i];
+					if (!JC.isVoid(tObj) && JC.isObject(tObj)) {
+						for (var key in tObj) {
+							obj[key] = tObj[key];
+						}
+					}
+				}
+				
+				return obj;
 			}
 		},
 		
@@ -1167,10 +1279,10 @@ var JC = jConcise = (function(){
 			 * @param {Date} date 要格式化的时间，如果该值不是Date类型，或者为null，使用系统当前时间
 			 */
 			formatDate: function(style, date){
-				if(JS.isVoid(date) || !JC.isDate(date)){
+				if(JC.isVoid(date) || !JC.isDate(date)){
 					date = new Date();
 				}
-				if(JS.isVoid(style) || !JC.isString(style)){
+				if(JC.isVoid(style) || !JC.isString(style)){
 					style = this.FORMAT_TYPE_DATETIME;
 				}
 				
@@ -1226,7 +1338,7 @@ var JC = jConcise = (function(){
 			 * @return {String}
 			 */
 			getRandomDateStr: function(style){
-				if(JS.isVoid(style) || !JC.isString(style)){
+				if(JC.isVoid(style) || !JC.isString(style)){
 					style = this.FORMAT_TYPE_DATETIME;
 				}
 				
@@ -1260,7 +1372,7 @@ var JC = jConcise = (function(){
 			 * @return {String}
 			 */
 			getRandomDateStrByRange: function(start, end, style){
-				if(JS.isVoid(style) || !JC.isString(style)){
+				if(JC.isVoid(style) || !JC.isString(style)){
 					style = this.FORMAT_TYPE_DATETIME;
 				}
 				
@@ -1287,7 +1399,7 @@ var JC = jConcise = (function(){
 				size = parseInt(size);
 				
 				var arr = [];
-				JC.loopFn(function(){
+				JC.Common.loopFn(function(){
 					arr.push(JC.Date.getRandomDateByRange(start, end));
 				}, size);
 				
@@ -1309,7 +1421,7 @@ var JC = jConcise = (function(){
 				});
 				
 				var strArr = [];
-				JC.loopObj(arr, function(date){
+				JC.Common.loopObj(arr, function(date){
 					strArr.push(JC.Date.formatDate(style, date));
 				});
 				return strArr;
@@ -1394,7 +1506,7 @@ var JC = jConcise = (function(){
 				size = parseInt(size);
 				
 				var arr = [];
-				JC.loopFn(function(){
+				JC.Common.loopFn(function(){
 					arr.push(JC.Date.getRandomDateByNow(offset));
 				}, size);
 				
@@ -1416,7 +1528,7 @@ var JC = jConcise = (function(){
 				});
 				
 				var strArr = [];
-				JC.loopObj(arr, function(date){
+				JC.Common.loopObj(arr, function(date){
 					strArr.push(JC.Date.formatDate(style, date));
 				});
 				return strArr;
