@@ -1,16 +1,16 @@
 /**
- * jConcise分为以下功能区：
- * 基础功能：	BasicFunction
- * 选择器：		Selecter
- * 组件：		Component
- * 基础方法：	Common
- * 字符串方法：	String
- * 数学方法：	Math
- * 数组方法：	Array
- * 对象方法：	Object
- * 时间方法：	Date
- * 浏览器：		Browser
- * 规则、正则或合法性检查：	Regular
+ * jConcise分为以下功能区：<br/>
+ * 基础功能：	BasicFunction<br/>
+ * 选择器：		Selecter<br/>
+ * 组件：		Component<br/>
+ * 基础方法：	Common<br/>
+ * 字符串方法：	String<br/>
+ * 数学方法：	Math<br/>
+ * 数组方法：	Array<br/>
+ * 对象方法：	Object<br/>
+ * 时间方法：	Date<br/>
+ * 浏览器：		Browser<br/>
+ * 规则、正则或合法性检查：	Regular<br/>
  */
 var JC = jConcise = (function(){
 	var GCP = {
@@ -87,6 +87,7 @@ var JC = jConcise = (function(){
 		 * 检查所有入参是否均为无实际意义的参数（null或undefined）
 		 */
 		isVoids: function() {
+			JC.Regular.checkArgumentVoid(arguments);
 			for (var i = 0, l = arguments.length;i < l;i++) {
 				if (!JC.isVoid(arguments[i])) return false;
 			}
@@ -96,6 +97,7 @@ var JC = jConcise = (function(){
 		 * 检查所有入参中是否存在无实际意义的参数（null或undefined）
 		 */
 		isVoidIn: function(){
+			JC.Regular.checkArgumentVoid(arguments);
 			for (var i = 0, l = arguments.length;i < l;i++) {
 				if (JC.isVoid(arguments[i])) return true;
 			}
@@ -129,20 +131,24 @@ var JC = jConcise = (function(){
 			return false;
 		},
 		/**
-		 * 判断入参数组内的元素是否都为数字
-		 * @param {Array} arr
+		 * 判断入参是否都为数字
 		 */
-		isNumbers: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isNumber(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}else{
-				return JC.isNumber(arr);
+		isNumbers: function(){
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!JC.isNumber(arguments[i])) return false;
 			}
+			return true;
+		},
+		/**
+		 * 判断入参是否存在数字
+		 */
+		isNumberIn: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isNumber(arguments[i])) return true;
+			}
+			return false;
 		},
 		/**
 		 * 判断入参是否为Boolean值
@@ -150,8 +156,6 @@ var JC = jConcise = (function(){
 		 */
 		isBoolean: function(obj){
 			if(JC.isVoid(obj)) return false;
-//			if(JC.isArray())
-			
 			if(typeof obj === 'boolean' && obj.constructor === Boolean){
 				return true;
 			}
@@ -159,19 +163,23 @@ var JC = jConcise = (function(){
 		},
 		/**
 		 * 判断入参数组内的元素是否都为布尔值
-		 * @param {Object} arr
 		 */
-		isBooleans: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isBoolean(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}else{
-				return JC.isBoolean(arr);
+		isBooleans: function(){
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!JC.isBoolean(arguments[i])) return false;
 			}
+			return true;
+		},
+		/**
+		 * 判断入参是否存在布尔值
+		 */
+		isBooleanIn: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isBoolean(arguments[i])) return true;
+			}
+			return false;
 		},
 		/**
 		 * 判断入参是否为String类型
@@ -186,19 +194,23 @@ var JC = jConcise = (function(){
 		},
 		/**
 		 * 判断入参数组内的元素是否都是String字符串
-		 * @param {Object} arr
 		 */
-		isStrings: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isString(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}else{
-				return JC.isString(arr);
+		isStrings: function(){
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!JC.isString(arguments[i])) return false;
 			}
+			return true;
+		},
+		/**
+		 * 判断入参是否存在字符串
+		 */
+		isStringIn: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isString(arguments[i])) return true;
+			}
+			return false;
 		},
 		
 		/**
@@ -214,19 +226,23 @@ var JC = jConcise = (function(){
 		},
 		/**
 		 * 判断入参数组内的元素是否都是Object对象
-		 * @param {Object} arr
 		 */
-		isObjects: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isObject(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}else{
-				return JC.isObject(arr);
+		isObjects: function(){
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!JC.isObject(arguments[i])) return false;
 			}
+			return true;
+		},
+		/**
+		 * 判断入参是否存在Object实例
+		 */
+		isObjectIn: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isObject(arguments[i])) return true;
+			}
+			return false;
 		},
 		/**
 		 * 判断入参是否为数组
@@ -241,16 +257,21 @@ var JC = jConcise = (function(){
 		},
 		/**
 		 * 判断入参数组内的元素是否都为数组
-		 * @param {Object} arr
 		 */
-		isArrays: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isArray(arr[i])){
-						return false;
-					}
-				}
-				return true;
+		isArrays: function(){
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!JC.isArray(arguments[i])) return false;
+			}
+			return true;
+		},
+		/**
+		 * 判断入参是否存在数组
+		 */
+		isArrayIn: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isArray(arguments[i])) return true;
 			}
 			return false;
 		},
@@ -267,19 +288,23 @@ var JC = jConcise = (function(){
 		},
 		/**
 		 * 判断入参数组内的元素是否都是Function
-		 * @param {Object} arr
 		 */
-		isFunctions: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isFunction(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}else{
-				return JC.isFunction(arr);
+		isFunctions: function(){
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!JC.isFunction(arguments[i])) return false;
 			}
+			return true;
+		},
+		/**
+		 * 判断入参是否存在方法
+		 */
+		isFunctionIn: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isFunction(arguments[i])) return true;
+			}
+			return false;
 		},
 		/**
 		 * 判断入参是否为Date对象
@@ -294,19 +319,23 @@ var JC = jConcise = (function(){
 		},
 		/**
 		 * 判断入参数组内的元素是否都是Date对象
-		 * @param {Object} arr
 		 */
-		isDates: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isDate(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}else{
-				return JC.isDate(arr);
+		isDates: function(){
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!JC.isDate(arguments[i])) return false;
 			}
+			return true;
+		},
+		/**
+		 * 判断入参是否存在Date实例
+		 */
+		isDateIn: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isDate(arguments[i])) return true;
+			}
+			return false;
 		},
 		/**
 		 * 判断入参是否为正则表达式
@@ -321,19 +350,23 @@ var JC = jConcise = (function(){
 		},
 		/**
 		 * 判断入参数组内的元素是否都是正则表达式
-		 * @param {Object} arr
 		 */
-		isRegExps: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isRegExp(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}else{
-				return JC.isRegExp(arr);
+		isRegExps: function(){
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!JC.isRegExp(arguments[i])) return false;
 			}
+			return true;
+		},
+		/**
+		 * 判断入参是否存在正则表达式实例
+		 */
+		isRegExpIn: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isRegExp(arguments[i])) return true;
+			}
+			return false;
 		},
 		/**
 		 * 判断对象是否是原始数据类型的数据。
@@ -424,8 +457,8 @@ var JC = jConcise = (function(){
 		
 		
 		
-		// String				----------> Begin
-		Common: {
+		// Common				----------> Begin
+		Common: {			
 			/**
 			 * 以name - value的形式，log输出一个对象
 			 * @param {Object} obj 要遍历输出的对象
@@ -525,7 +558,7 @@ var JC = jConcise = (function(){
 			clone: function(obj) {
 				// 不克隆函数
 				if (JC.isFunction(obj)) {
-					throw new TypeError('[JC - Common]Invalid parameter: Function');
+					throw new TypeError('[JC - Common]Invalid arguments: Function');
 				}
 				
 				// 克隆：Date, ArrayObject, 
@@ -541,11 +574,31 @@ var JC = jConcise = (function(){
 				return obj;
 			}
 		},
+		// Common				----------> End
+		
+		
+		
+		
+		
+		
+		
+		// Number				----------> Begin
+		Number: {
+			/**
+			 * 获得入参数字的位数
+			 * @param {Number} num
+			 */
+			getDigit: function(num) {
+				if (JC.isVoid(num) || JC.isNumber(num)) {
+					throw new TypeError('[JC - Number]Invalid arguments: null, undefined or not a Number.');
+				}
 				
-		
-		
-		
-		// String				----------> End
+				num = parseInt(num) + '';
+				return num.length;
+			}
+			
+		},
+		// Number				----------> End
 		
 		
 		
@@ -604,7 +657,7 @@ var JC = jConcise = (function(){
 			 */
 			isStrIsNum: function(str) {
 				if (JC.isVoid(str) || !JC.isString(str)) {
-					throw new TypeError('[JC - String]Invalid parameter: null, undefined or not a String.');
+					throw new TypeError('[JC - String]Invalid arguments: null, undefined or not a String.');
 				}
 				
 				var tN = Number(str);
@@ -787,11 +840,11 @@ var JC = jConcise = (function(){
 			 */
 			contains: function(arr, value) {
 				if (JC.isVoid(arr) || !JC.isArray(arr)) {
-					throw new TypeError('[JC - Array]Invalid parameter: null, undefined or not an Array.');
+					throw new TypeError('[JC - Array]Invalid arguments: null, undefined or not an Array.');
 				}
-				// if missing the second parameter, show error info.
+				// if missing the second arguments, show error info.
 				if (arguments.length <= 1) {
-					throw new Error('[JC - Array]Missing parameter: your second parameter is missing.');
+					throw new Error('[JC - Array]Missing arguments: your second argument is missing.');
 				}
 				
 				for (var i = 0, l = arr.length;i < l;i++) {
@@ -808,7 +861,7 @@ var JC = jConcise = (function(){
 			 */
 			equals: function(arr1, arr2) {
 				if (JC.isVoidIn(arr1, arr2) || !JC.isArray(arr1) || !JC.isArray(arr2)) {
-					throw new TypeError('[JC - Array]Invalid parameter: null, undefined or not an Array.');
+					throw new TypeError('[JC - Array]Invalid arguments: null, undefined or not an Array.');
 				}
 				
 				if (arr1 == arr2) return true;
@@ -840,7 +893,7 @@ var JC = jConcise = (function(){
 			 */
 			convertFromArrayLike: function(obj) {
 				if (JC.isVoid(obj)) {
-					throw new TypeError('[JC - Array]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Array]Invalid arguments: null or undefined.');
 				}
 				
 				return [].slice.call(obj);
@@ -855,18 +908,18 @@ var JC = jConcise = (function(){
 			getIndexOfEligibleObj: function(arr, obj) {
 				// 第二入参必须存在
 				if (arguments.length < 2) {
-					throw new Error('[JC - Array]Missing parameter: your second parameter is missing.');
+					throw new Error('[JC - Array]Missing arguments: your second argument is missing.');
 				}
 				
 				// 入参合法性验证
 				if (JC.isVoidIn(arr, obj)) {
-					throw new TypeError('[JC - Array]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Array]Invalid arguments: null or undefined.');
 				}
 				if (!JC.isArray(arr)) {
-					throw new TypeError('[JC - Array]Invalid parameter: not an Array.');
+					throw new TypeError('[JC - Array]Invalid arguments: not an Array.');
 				}
 				if (!JC.isObject(obj)) {
-					throw new TypeError('[JC - Array]Invalid parameter: not an Object.');
+					throw new TypeError('[JC - Array]Invalid arguments: not an Object.');
 				}
 				
 				for (var i = 0, l = arr.length;i < l;i++) {
@@ -903,10 +956,10 @@ var JC = jConcise = (function(){
 			 */
 			getSize: function(obj) {
 				if (JC.isVoid(obj)) {
-					throw new TypeError('[JC - Object]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Object]Invalid arguments: null or undefined.');
 				}
 				if (!JC.isObject(obj)) {
-					throw new TypeError('[JC - Object]Invalid parameter: not an Object.');
+					throw new TypeError('[JC - Object]Invalid arguments: not an Object.');
 				}
 				return Object.keys(obj).length;
 			},
@@ -916,10 +969,10 @@ var JC = jConcise = (function(){
 			 */
 			clone: function(obj) {
 				if (JC.isVoid(obj)) {
-					throw new TypeError('[JC - Object]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Object]Invalid arguments: null or undefined.');
 				}
 				if (!JC.isObject(obj)) {
-					throw new TypeError('[JC - Object]Invalid parameter: not an Object.');
+					throw new TypeError('[JC - Object]Invalid arguments: not an Object.');
 				}
 				
 				var tObj = new Object();
@@ -940,11 +993,11 @@ var JC = jConcise = (function(){
 			 */
 			contains: function(obj, key) {
 				if (JC.isVoid(obj) || !JC.isObject(obj)) {
-					throw new TypeError('[JC - Object]Invalid parameter: null, undefined or not an Object.');
+					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not an Object.');
 				}
-				// if missing the second parameter, show error info.
+				// if missing the second arguments, show error info.
 				if (arguments.length <= 1) {
-					throw new Error('[JC - Object]Missing parameter: your second parameter is missing.');
+					throw new Error('[JC - Object]Missing arguments: your second argument is missing.');
 				}
 				
 				return JC.Array.contains(Object.keys(obj), key);
@@ -961,10 +1014,10 @@ var JC = jConcise = (function(){
 			 */
 			equals: function(obj1, obj2) {
 				if (JC.isVoidIn(obj1, obj2)) {
-					throw new TypeError('[JC - Object]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Object]Invalid arguments: null or undefined.');
 				}
 				if (!JC.isObject(obj1) || !JC.isObject(obj2)) {
-					throw new TypeError('[JC - Object]Invalid parameter: not an Object.');
+					throw new TypeError('[JC - Object]Invalid arguments: not an Object.');
 				}
 				
 				if (JC.Object.getSize(obj1) != JC.Object.getSize(obj2)) return false;
@@ -1017,13 +1070,117 @@ var JC = jConcise = (function(){
 			}
 		},
 		
-		
-		
-		
-		
 		// Object				----------> End
 		
 		
+		
+		
+		
+		
+		// Iterator             ----------> End
+		/**
+		 * 可迭代对象：Number, String, Object, Array, arguments
+		 * next()方法返回一个对象，该对象包含name, value, index, done(迭代是否完成，如果已经返回了最后参数，该值为true。)
+		 * @param {Object} obj
+		 */
+		Iterator: function(obj) {
+			if (JC.isVoid(obj)) {
+				throw new TypeError('[JC - Iterator]Invalid arguments: null or undefined.');
+			}
+			if (!(JC.isNumber(obj) || JC.isString(obj) || JC.isObject(obj) || JC.isArray(obj) || JC.isVoid(obj.length))) {
+				throw new TypeError('[JC - Iterator]Invalid arguments: data type cannot be iterated.');
+			}
+			
+			var ICP = {
+				_length: 0,
+				_isFirst: true,
+				_isEnd: false,
+				_index: 0,
+				_init: function() {
+					this._isFirst = true;
+					if (this._length <= 0) {
+						this._isEnd = true;
+						this._index = -1;
+					} else {
+						this._isEnd = false;
+						this._index = 0;
+					}
+				},
+				EOF: true
+			};
+			// 处理要迭代的对象
+			var tgo = JC.Common.clone(obj);
+			switch(tgo.constructor) {
+				case Number:
+					tgo += '';
+				case String:
+					tgo = tgo.split('');
+					break;
+				case Array:
+					break;
+				case Object:
+					// tgo成为入参Object实例的键集数组
+					tgo = Object.keys(obj);
+					break;
+				default:
+					break;
+			}
+			ICP._length = tgo.length;
+			ICP._init();
+			return {
+				/**
+				 * 迭代尚未开始
+				 */
+				notBegun: function() {
+					return ICP._isFirst ? true : false
+				},
+				/**
+				 * 是否迭代完毕
+				 */
+				hasDone: function() {
+					return ICP._isEnd ? true : false;
+				},
+				/**
+				 * 正在迭代中
+				 */
+				inProgress: function() {
+					return (ICP._isFirst === false && ICP._isEnd === false) ? true : false;
+				},
+				/**
+				 * 获得下一条数据
+				 */
+				next: function() {
+					if (!ICP._isEnd) {
+						var name,value,done = false;
+						var index = ICP._index;
+						if (JC.isObject(obj)) {
+							name = tgo[index];
+							value = obj[name];
+						} else {
+							name = index;
+							value = tgo[index];
+						}
+						if ((ICP._index + 1) >= ICP._length) {
+							ICP._isEnd = true;
+						} else {
+							ICP._isFirst = false;
+						}
+						ICP._index++;
+						var tObj = {
+							name: name,
+							value: value,
+							index: index,
+							done: done
+						};
+						return tObj;
+					}
+					return {
+						done: true
+					}
+				}
+			}
+		},
+		// Iterator             ----------> End
 		
 		
 		
@@ -1257,7 +1414,7 @@ var JC = jConcise = (function(){
 			 */
 			isValidDate: function(date) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				
 				if (isNaN(date.getTime())) return false;
@@ -1270,7 +1427,7 @@ var JC = jConcise = (function(){
 			 */
 			isValidDateStr: function(dateStr) {
 				if (JC.isVoid(dateStr) || !JC.isString(dateStr)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a String.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a String.');
 				}
 				
 				return JC.Date.isValidDate(new Date(dateStr));
@@ -1284,7 +1441,7 @@ var JC = jConcise = (function(){
 			isLeapYearByNum: function(num) {
 				num = parseInt(num);
 				if (JC.isVoid(num) || !JC.isNumber(num)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined, not a Number or cannot be converted to Number.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined, not a Number or cannot be converted to Number.');
 				}
 				
 				if ((num % 4 === 0 && num % 100 !== 0) || (num % 400 === 0)) return true;
@@ -1297,7 +1454,7 @@ var JC = jConcise = (function(){
 			 */
 			isLeapYearByDate: function(date) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				
 				var year = date.getFullYear();
@@ -1602,7 +1759,7 @@ var JC = jConcise = (function(){
 			 */
 			getFullMonth: function(date) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				
 				var value = date.getMonth() + 1;
@@ -1615,7 +1772,7 @@ var JC = jConcise = (function(){
 			 */
 			getFullDay: function(date) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				
 				var value = date.getDate() + 1;
@@ -1628,7 +1785,7 @@ var JC = jConcise = (function(){
 			 */
 			getFullHours: function(date) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				
 				var value = date.getHours() + 1;
@@ -1640,7 +1797,7 @@ var JC = jConcise = (function(){
 			 */
 			getFullMinutes: function(date) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				
 				var value = date.getMinutes() + 1;
@@ -1653,7 +1810,7 @@ var JC = jConcise = (function(){
 			 */
 			getFullSeconds: function(date) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				
 				var value = date.getSeconds() + 1;
@@ -1667,10 +1824,10 @@ var JC = jConcise = (function(){
 			 */
 			getDateByChanged: function(date, milliseconds) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				if (JC.isVoid(milliseconds) || !JC.isNumber(milliseconds)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Number.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Number.');
 				}
 				
 				return new Date(date.getTime() + milliseconds);
@@ -1683,10 +1840,10 @@ var JC = jConcise = (function(){
 			 */
 			addYears: function(date, num) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				if (JC.isVoid(num) || !JC.isNumber(num)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Number.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Number.');
 				}
 				
 				var newDate = new Date(date.getTime());
@@ -1703,10 +1860,10 @@ var JC = jConcise = (function(){
 			 */
 			addMonths: function(date, num) {
 				if (JC.isVoid(date) || !JC.isDate(date)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Date.');
 				}
 				if (JC.isVoid(num) || !JC.isNumber(num)) {
-					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Number.');
+					throw new TypeError('[JC - Date]Invalid arguments: null, undefined or not a Number.');
 				}
 				
 				var newDate = new Date(date.getTime());
@@ -1814,6 +1971,24 @@ var JC = jConcise = (function(){
 		 * 规则、正则或合法性检查
 		 */
 		Regular: {
+			/**
+			 * 检查方法入参个数书否为零，如果是则给出错误信息。
+			 * @param {Object} args 方法默认的arguments对象
+			 */
+			checkArgumentVoid: function(args) {
+				if (args.length <= 0) {
+					throw new Error('[JC - Regular]Invalid arguments: no argument.');
+				}
+			},
+			/**
+			 * 检查方法入参个数是否达标，如果否则给出错误信息。
+			 * @param {Object} args
+			 */
+			checkArgumentsCount: function(args, count) {
+				if (args.length < count) {
+					throw new Error('[JC - Regular]Invalid arguments: arguments count less than ' + count + '.');
+				}
+			},
 			/**
 			 * 去除字符串中的非法字符
 			 * @param {Object} str
