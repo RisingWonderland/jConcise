@@ -15,10 +15,13 @@
 var JC = jConcise = (function(){
 	var GCP = {
 		Date: {
+			dateMaxDay: 100000000,
+			dateMinDay: -1 * this.dateMaxDay,
 			yearZero: 946656000000,
-			minMilliTime: -253370736000000,
-			maxMilliTime: 253402271999000,
-			maxMilliTimeDigit: 15
+			oneDayMillisecond: 24*60*60*1000, 
+			maxMillisecond: this.oneDayMillisecond * this.dateMaxDay,
+			minMillisecond: -1 * this.maxMillisecond,
+			maxMillisecondDigit: 16
 		}
 	}
 	return {
@@ -73,11 +76,53 @@ var JC = jConcise = (function(){
 		},
 		
 		/**
+		 * 检查入参是否为无实际意义的参数（null或undefined）
+		 * @param {Object} obj
+		 */
+		isVoid: function(obj) {
+			if (obj === null || obj === undefined) return true;
+			return false;
+		},
+		/**
+		 * 检查所有入参是否均为无实际意义的参数（null或undefined）
+		 */
+		isVoids: function() {
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (!JC.isVoid(arguments[i])) return false;
+			}
+			return true;
+		},
+		/**
+		 * 检查所有入参中是否存在无实际意义的参数（null或undefined）
+		 */
+		isVoidIn: function(){
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isVoid(arguments[i])) return true;
+			}
+			return false;
+		},
+		/**
+		 * 检查入参是否为空值，空值包括：
+		 * null
+		 * undefined
+		 * 空字符串
+		 * 空字符串
+		 * 空数组
+		 * 空对象
+		 * @param {Object} obj
+		 */
+		isEmpty: function(obj) {
+			if (JC.isVoid(obj) || obj === '') return true;
+			if (JC.isArray(obj) && obj.length == 0) return true;
+			if (JC.isObject(obj) && JC.Object.getSize(obj) == 0) return true;
+			return false;
+		},
+		/**
 		 * 判断入参是否为数字
 		 * @param {Object} obj 要检查的内容
 		 */
 		isNumber: function(obj){
-			if(this.isVoid(obj)) return false;
+			if(JC.isVoid(obj)) return false;
 			if(typeof obj === 'number' && obj.constructor === Number){
 				return true;
 			}
@@ -96,7 +141,7 @@ var JC = jConcise = (function(){
 				}
 				return true;
 			}else{
-				return this.isNumber(arr);
+				return JC.isNumber(arr);
 			}
 		},
 		/**
@@ -104,8 +149,8 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isBoolean: function(obj){
-			if(this.isVoid(obj)) return false;
-//			if(this.isArray())
+			if(JC.isVoid(obj)) return false;
+//			if(JC.isArray())
 			
 			if(typeof obj === 'boolean' && obj.constructor === Boolean){
 				return true;
@@ -125,34 +170,7 @@ var JC = jConcise = (function(){
 				}
 				return true;
 			}else{
-				return this.isBoolean(arr);
-			}
-		},
-		/**
-		 * 判断入参是否为Date对象
-		 * @param {Object} obj 要检查的内容
-		 */
-		isDate: function(obj){
-			if(this.isVoid(obj)) return false;
-			if(typeof obj === 'object' && obj.constructor === Date){
-				return true;
-			}
-			return false;
-		},
-		/**
-		 * 判断入参数组内的元素是否都是Date对象
-		 * @param {Object} arr
-		 */
-		isDates: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isDate(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}else{
-				return this.isDate(arr);
+				return JC.isBoolean(arr);
 			}
 		},
 		/**
@@ -160,7 +178,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isString: function(obj){
-			if(this.isVoid(obj)) return false;
+			if(JC.isVoid(obj)) return false;
 			if(typeof obj === 'string' && obj.constructor === String){
 				return true;
 			}
@@ -179,61 +197,35 @@ var JC = jConcise = (function(){
 				}
 				return true;
 			}else{
-				return this.isString(arr);
+				return JC.isString(arr);
 			}
 		},
+		
 		/**
-		 * 判断入参是否为Function
-		 * @param {Object} obj 要检查的内容
+		 * 判断入参是否为Object对象
+		 * @param {Object} obj
 		 */
-		isFunction: function(obj){
-			if(this.isVoid(obj)) return false;
-			if(typeof obj === 'function' && obj.constructor === Function){
+		isObject: function(obj){
+			if(JC.isVoid(obj)) return false;
+			if(typeof obj === 'object' && obj.constructor === Object){
 				return true;
 			}
 			return false;
 		},
 		/**
-		 * 判断入参数组内的元素是否都是Function
+		 * 判断入参数组内的元素是否都是Object对象
 		 * @param {Object} arr
 		 */
-		isFunctions: function(arr){
+		isObjects: function(arr){
 			if(JC.isArray(arr)){
 				for(var i in arr){
-					if(!JC.isFunction(arr[i])){
+					if(!JC.isObject(arr[i])){
 						return false;
 					}
 				}
 				return true;
 			}else{
-				return this.isFunction(arr);
-			}
-		},
-		/**
-		 * 判断入参是否为正则表达式
-		 * @param {Object} obj 要检查的内容
-		 */
-		isRegExp: function(obj){
-			if(this.isVoid(obj)) return false;
-			if(typeof obj === 'object' && obj.constructor === RegExp){
-				return true;
-			}
-			return false;
-		},
-		/**
-		 * 判断入参数组内的元素是否都是正则表达式
-		 * @param {Object} arr
-		 */
-		isRegExps: function(arr){
-			if(JC.isArray(arr)){
-				for(var i in arr){
-					if(!JC.isRegExp(arr[i])){
-						return false;
-					}
-				}
-				return true;
-			}else{
-				return this.isRegExp(arr);
+				return JC.isObject(arr);
 			}
 		},
 		/**
@@ -241,7 +233,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj 要检查的内容
 		 */
 		isArray: function(obj){
-			if(this.isVoid(obj)) return false;
+			if(JC.isVoid(obj)) return false;
 			if(typeof obj === 'object' && obj.constructor === Array){
 				return true;
 			}
@@ -263,30 +255,84 @@ var JC = jConcise = (function(){
 			return false;
 		},
 		/**
-		 * 判断入参是否为Object对象
-		 * @param {Object} obj
+		 * 判断入参是否为Function
+		 * @param {Object} obj 要检查的内容
 		 */
-		isObject: function(obj){
-			if(this.isVoid(obj)) return false;
-			if(typeof obj === 'object' && obj.constructor === Object){
+		isFunction: function(obj){
+			if(JC.isVoid(obj)) return false;
+			if(typeof obj === 'function' && obj.constructor === Function){
 				return true;
 			}
 			return false;
 		},
 		/**
-		 * 判断入参数组内的元素是否都是Object对象
+		 * 判断入参数组内的元素是否都是Function
 		 * @param {Object} arr
 		 */
-		isObjects: function(arr){
+		isFunctions: function(arr){
 			if(JC.isArray(arr)){
 				for(var i in arr){
-					if(!JC.isObject(arr[i])){
+					if(!JC.isFunction(arr[i])){
 						return false;
 					}
 				}
 				return true;
 			}else{
-				return this.isObject(arr);
+				return JC.isFunction(arr);
+			}
+		},
+		/**
+		 * 判断入参是否为Date对象
+		 * @param {Object} obj 要检查的内容
+		 */
+		isDate: function(obj){
+			if(JC.isVoid(obj)) return false;
+			if(typeof obj === 'object' && obj.constructor === Date){
+				return true;
+			}
+			return false;
+		},
+		/**
+		 * 判断入参数组内的元素是否都是Date对象
+		 * @param {Object} arr
+		 */
+		isDates: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isDate(arr[i])){
+						return false;
+					}
+				}
+				return true;
+			}else{
+				return JC.isDate(arr);
+			}
+		},
+		/**
+		 * 判断入参是否为正则表达式
+		 * @param {Object} obj 要检查的内容
+		 */
+		isRegExp: function(obj){
+			if(JC.isVoid(obj)) return false;
+			if(typeof obj === 'object' && obj.constructor === RegExp){
+				return true;
+			}
+			return false;
+		},
+		/**
+		 * 判断入参数组内的元素是否都是正则表达式
+		 * @param {Object} arr
+		 */
+		isRegExps: function(arr){
+			if(JC.isArray(arr)){
+				for(var i in arr){
+					if(!JC.isRegExp(arr[i])){
+						return false;
+					}
+				}
+				return true;
+			}else{
+				return JC.isRegExp(arr);
 			}
 		},
 		/**
@@ -294,7 +340,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj
 		 */
 		isPrimitiveDataType: function(obj) {
-			if (this.isVoid(obj) || this.isNumber() || this.isBoolean() || this.isString()) {
+			if (JC.isVoid(obj) || JC.isNumber() || JC.isBoolean() || JC.isString()) {
 				return true;
 			}
 			return false;
@@ -304,7 +350,7 @@ var JC = jConcise = (function(){
 		 * @param {Object} obj
 		 */
 		isObjectDataType: function(obj) {
-			return !this.isPrimitiveDataType(obj);
+			return !JC.isPrimitiveDataType(obj);
 		},
 		
 		/**
@@ -318,48 +364,6 @@ var JC = jConcise = (function(){
 			return false;
 		},
 		
-		/**
-		 * 检查入参是否为无实际意义的参数（null或undefined）
-		 * @param {Object} obj
-		 */
-		isVoid: function(obj) {
-			if (obj === null || obj === undefined) return true;
-			return false;
-		},
-		/**
-		 * 检查所有入参是否均为无实际意义的参数（null或undefined）
-		 */
-		isVoids: function() {
-			for (var i = 0, l = arguments.length;i < l;i++) {
-				if (!this.isVoid(arguments[i])) return false;
-			}
-			return true;
-		},
-		/**
-		 * 检查所有入参中是否存在无实际意义的参数（null或undefined）
-		 */
-		isVoidIn: function(){
-			for (var i = 0, l = arguments.length;i < l;i++) {
-				if (this.isVoid(arguments[i])) return true;
-			}
-			return false;
-		},
-		/**
-		 * 检查入参是否为空值，空值包括：
-		 * null
-		 * undefined
-		 * 空字符串
-		 * 空字符串
-		 * 空数组
-		 * 空对象
-		 * @param {Object} obj
-		 */
-		isEmpty: function(obj) {
-			if (this.isVoid(obj) || obj === '') return true;
-			if (this.isArray(obj) && obj.length == 0) return true;
-			if (this.isObject(obj) && this.Object.getSize(obj) == 0) return true;
-			return false;
-		},
 		
 		
 		// BasicFunction		----------> End
@@ -431,7 +435,7 @@ var JC = jConcise = (function(){
 				if(!JC.isBoolean(execFunc)) execFunc = false;
 				
 				for(var name in obj){
-					if(this.isFunction(obj[name]) && execFunc == true){
+					if(JC.isFunction(obj[name]) && execFunc == true){
 						obj[name]();
 					}else{
 						console.log(name + ': ' + obj[name]);
@@ -520,17 +524,17 @@ var JC = jConcise = (function(){
 			 */
 			clone: function(obj) {
 				// 不克隆函数
-				if (this.isFunction(obj)) {
-					throw new Error('[JC - Common]Invalid parameter: function');
+				if (JC.isFunction(obj)) {
+					throw new TypeError('[JC - Common]Invalid parameter: Function');
 				}
 				
 				// 克隆：Date, ArrayObject, 
-				if (!this.isPrimitiveDataType(obj) || !this.isRegExp(obj)) {
-					if (this.isDate(obj)) {
+				if (!JC.isPrimitiveDataType(obj) || !JC.isRegExp(obj)) {
+					if (JC.isDate(obj)) {
 						return new Date(obj.getTime());
-					} else if (this.isArrays(obj)) {
+					} else if (JC.isArrays(obj)) {
 						return [].slice.call(obj);
-					} else if (this.isObject(obj)) {
+					} else if (JC.isObject(obj)) {
 						return JC.Object.clone(obj);
 					}
 				}
@@ -600,7 +604,7 @@ var JC = jConcise = (function(){
 			 */
 			isStrIsNum: function(str) {
 				if (JC.isVoid(str) || !JC.isString(str)) {
-					throw new Error('[JC - String]Invalid parameter: null, undefined or not string.');
+					throw new TypeError('[JC - String]Invalid parameter: null, undefined or not a String.');
 				}
 				
 				var tN = Number(str);
@@ -783,7 +787,7 @@ var JC = jConcise = (function(){
 			 */
 			contains: function(arr, value) {
 				if (JC.isVoid(arr) || !JC.isArray(arr)) {
-					throw new Error('[JC - Array]Invalid parameter: null, undefined or not an array.');
+					throw new TypeError('[JC - Array]Invalid parameter: null, undefined or not an Array.');
 				}
 				// if missing the second parameter, show error info.
 				if (arguments.length <= 1) {
@@ -804,7 +808,7 @@ var JC = jConcise = (function(){
 			 */
 			equals: function(arr1, arr2) {
 				if (JC.isVoidIn(arr1, arr2) || !JC.isArray(arr1) || !JC.isArray(arr2)) {
-					throw new Error('[JC - Array]Invalid parameter: null, undefined or not an array.');
+					throw new TypeError('[JC - Array]Invalid parameter: null, undefined or not an Array.');
 				}
 				
 				if (arr1 == arr2) return true;
@@ -836,7 +840,7 @@ var JC = jConcise = (function(){
 			 */
 			convertFromArrayLike: function(obj) {
 				if (JC.isVoid(obj)) {
-					throw new Error('[JC - Array]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Array]Invalid parameter: null or undefined.');
 				}
 				
 				return [].slice.call(obj);
@@ -856,13 +860,13 @@ var JC = jConcise = (function(){
 				
 				// 入参合法性验证
 				if (JC.isVoidIn(arr, obj)) {
-					throw new Error('[JC - Array]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Array]Invalid parameter: null or undefined.');
 				}
 				if (!JC.isArray(arr)) {
-					throw new Error('[JC - Array]Invalid parameter: not an array.');
+					throw new TypeError('[JC - Array]Invalid parameter: not an Array.');
 				}
 				if (!JC.isObject(obj)) {
-					throw new Error('[JC - Array]Invalid parameter: not an object.');
+					throw new TypeError('[JC - Array]Invalid parameter: not an Object.');
 				}
 				
 				for (var i = 0, l = arr.length;i < l;i++) {
@@ -899,10 +903,10 @@ var JC = jConcise = (function(){
 			 */
 			getSize: function(obj) {
 				if (JC.isVoid(obj)) {
-					throw new Error('[JC - Object]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Object]Invalid parameter: null or undefined.');
 				}
 				if (!JC.isObject(obj)) {
-					throw new Error('[JC - Object]Invalid parameter: not an object.');
+					throw new TypeError('[JC - Object]Invalid parameter: not an Object.');
 				}
 				return Object.keys(obj).length;
 			},
@@ -912,10 +916,10 @@ var JC = jConcise = (function(){
 			 */
 			clone: function(obj) {
 				if (JC.isVoid(obj)) {
-					throw new Error('[JC - Object]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Object]Invalid parameter: null or undefined.');
 				}
 				if (!JC.isObject(obj)) {
-					throw new Error('[JC - Object]Invalid parameter: not an object.');
+					throw new TypeError('[JC - Object]Invalid parameter: not an Object.');
 				}
 				
 				var tObj = new Object();
@@ -936,7 +940,7 @@ var JC = jConcise = (function(){
 			 */
 			contains: function(obj, key) {
 				if (JC.isVoid(obj) || !JC.isObject(obj)) {
-					throw new Error('[JC - Object]Invalid parameter: null, undefined or not an object.');
+					throw new TypeError('[JC - Object]Invalid parameter: null, undefined or not an Object.');
 				}
 				// if missing the second parameter, show error info.
 				if (arguments.length <= 1) {
@@ -957,17 +961,17 @@ var JC = jConcise = (function(){
 			 */
 			equals: function(obj1, obj2) {
 				if (JC.isVoidIn(obj1, obj2)) {
-					throw new Error('[JC - Object]Invalid parameter: null or undefined.');
+					throw new TypeError('[JC - Object]Invalid parameter: null or undefined.');
 				}
 				if (!JC.isObject(obj1) || !JC.isObject(obj2)) {
-					throw new Error('[JC - Object]Invalid parameter: not an object.');
+					throw new TypeError('[JC - Object]Invalid parameter: not an Object.');
 				}
 				
-				if (this.getSize(obj1) != this.getSize(obj2)) return false;
+				if (JC.Object.getSize(obj1) != JC.Object.getSize(obj2)) return false;
 				
 				for (var key in obj1) {
 					if (obj1.hasOwnProperty(key)) {
-						if (!this.contains(obj2, key)) {
+						if (!JC.Object.contains(obj2, key)) {
 							return false;
 						} else {
 							if (!JC.isSameType(obj1[key], obj2[key])) {
@@ -1112,7 +1116,7 @@ var JC = jConcise = (function(){
 			getRandomNumArr: function(maximum,length,isDistinct){
 				var arr = new Array(),arrl = 0,num = 0,isExist = false;
 				while(arrl < length){
-					num = this.getRandomNum(maximum);
+					num = JC.Math.getRandomNum(maximum);
 					if(isDistinct == true){
 						isExist = false;
 						// 检查数组中是否存在相同的随机数
@@ -1177,8 +1181,9 @@ var JC = jConcise = (function(){
 			/**
 			 * 检测年份值是否合法
 			 * @param {Number} y
+			 * @return {Boolean} if true, valid; if false, invalid.
 			 */
-			isRightYear: function(y){
+			isValidYear: function(y){
 				y = parseInt(y);
 				if(JC.isNumber(y)){
 					if(y >= 1 && y <= 9999) return true;
@@ -1188,8 +1193,9 @@ var JC = jConcise = (function(){
 			/**
 			 * 检测月份值是否合法
 			 * @param {Number} m
+			 * @return {Boolean} if true, valid; if false, invalid.
 			 */
-			isRightMonth: function(m){
+			isValidMonth: function(m){
 				m = parseInt(m);
 				if(JC.isNumber(m)){
 					if(m >= 1 && m <= 12) return true;
@@ -1199,8 +1205,9 @@ var JC = jConcise = (function(){
 			/**
 			 * 检测小时值是否合法
 			 * @param {Number} h
+			 * @return {Boolean} if true, valid; if false, invalid.
 			 */
-			isRightHour: function(h){
+			isValidHour: function(h){
 				h = parseInt(h);
 				if(JC.isNumber(h)){
 					if(h >= 1 && h <= 24) return true;
@@ -1210,8 +1217,9 @@ var JC = jConcise = (function(){
 			/**
 			 * 检测分钟值是否合法
 			 * @param {Number} m
+			 * @return {Boolean} if true, valid; if false, invalid.
 			 */
-			isRightMinutes: function(m){
+			isValidMinutes: function(m){
 				m = parseInt(m);
 				if(JC.isNumber(m)){
 					if(m >= 1 && m <= 60) return true;
@@ -1221,8 +1229,9 @@ var JC = jConcise = (function(){
 			/**
 			 * 检测秒值是否合法
 			 * @param {Number} s
+			 * @return {Boolean} if true, valid; if false, invalid.
 			 */
-			isRightSeconds: function(s){
+			isValidSeconds: function(s){
 				s = parseInt(s);
 				if(JC.isNumber(s)){
 					if(s >= 1 && s <= 60) return true;
@@ -1232,13 +1241,67 @@ var JC = jConcise = (function(){
 			/**
 			 * 检测毫秒值是否合法
 			 * @param {Number} ms
+			 * @return {Boolean} if true, valid; if false, invalid.
 			 */
-			isRightMilliseconds: function(ms){
+			isValidMilliseconds: function(ms){
 				ms = parseInt(ms);
 				if(JC.isNumber(ms)){
 					if(ms >= 1 && ms <= 999) return true;
 				}
 				return false;
+			},
+			/**
+			 * 检测date实例是否合法
+			 * @param {Date} date
+			 * @return {Boolean} if true, valid; if false, invalid.
+			 */
+			isValidDate: function(date) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				
+				if (isNaN(date.getTime())) return false;
+				return true;
+			},
+			/**
+			 * 检测时间字符串是否合法
+			 * @param {String} dateStr
+			 * @return {Boolean} if true, valid; if false, invalid.
+			 */
+			isValidDateStr: function(dateStr) {
+				if (JC.isVoid(dateStr) || !JC.isString(dateStr)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a String.');
+				}
+				
+				return JC.Date.isValidDate(new Date(dateStr));
+			},
+			
+			/**
+			 * 判断接收的数字是否可作为闰年数值
+			 * @param {Object} num
+			 * @return {Boolean} if true, is leap year; is false, is not.
+			 */
+			isLeapYearByNum: function(num) {
+				num = parseInt(num);
+				if (JC.isVoid(num) || !JC.isNumber(num)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined, not a Number or cannot be converted to Number.');
+				}
+				
+				if ((num % 4 === 0 && num % 100 !== 0) || (num % 400 === 0)) return true;
+				return false;
+			},
+			/**
+			 * 判断接收的date示例是否是闰年
+			 * @param {Object} date
+			 * @return {Boolean} if true, is leap year; is false, is not.
+			 */
+			isLeapYearByDate: function(date) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				
+				var year = date.getFullYear();
+				return JC.Date.isLeapYear(year);
 			},
 			
 			
@@ -1271,7 +1334,7 @@ var JC = jConcise = (function(){
 			 * yy: 两位年份
 			 * MM: 月份
 			 * dd: 日期在其所在月
-			 * HH: 小时，24小时制
+			 * HH: 整点，24小时制
 			 * mm: 分钟
 			 * ss: 秒
 			 * ms: 毫秒
@@ -1283,7 +1346,7 @@ var JC = jConcise = (function(){
 					date = new Date();
 				}
 				if(JC.isVoid(style) || !JC.isString(style)){
-					style = this.FORMAT_TYPE_DATETIME;
+					style = JC.Date.FORMAT_TYPE_DATETIME;
 				}
 				
 				var dateStr = style.replace(/yyyy|yy|MM|dd|HH|mm|ss|ms/g, function(s){
@@ -1313,14 +1376,14 @@ var JC = jConcise = (function(){
 			 * @param {Date} date
 			 */
 			quickFormatDate: function(type, date){
-				var style = this.FORMAT_TYPE_DATETIME;
+				var style = JC.Date.FORMAT_TYPE_DATETIME;
 				if(type === 'date'){
-					style = this.FORMAT_TYPE_DATE;
+					style = JC.Date.FORMAT_TYPE_DATE;
 				}else if(type === 'time'){
-					style = this.FORMAT_TYPE_TIME;
+					style = JC.Date.FORMAT_TYPE_TIME;
 				}
 				
-				return this.formatDate(style, date);
+				return JC.Date.formatDate(style, date);
 			},
 			
 			
@@ -1329,7 +1392,7 @@ var JC = jConcise = (function(){
 			 * @return {Date}
 			 */
 			getRandomDate: function(){
-				return this.getRandomDateByRange(new Date(GCP.Date.maxMilliTime), new Date(GCP.Date.minMilliTime));
+				return JC.Date.getRandomDateByRange(new Date(GCP.Date.maxMillisecond), new Date(GCP.Date.minMillisecond));
 			},
 			/**
 			 * 获得一个从B.C 9999年至A.D 9999年之间的随机时间字符串
@@ -1339,12 +1402,12 @@ var JC = jConcise = (function(){
 			 */
 			getRandomDateStr: function(style){
 				if(JC.isVoid(style) || !JC.isString(style)){
-					style = this.FORMAT_TYPE_DATETIME;
+					style = JC.Date.FORMAT_TYPE_DATETIME;
 				}
 				
-				return this.formatDate(
+				return JC.Date.formatDate(
 					style, 
-					this.getRandomDate()
+					JC.Date.getRandomDate()
 				);
 			},
 			
@@ -1373,12 +1436,12 @@ var JC = jConcise = (function(){
 			 */
 			getRandomDateStrByRange: function(start, end, style){
 				if(JC.isVoid(style) || !JC.isString(style)){
-					style = this.FORMAT_TYPE_DATETIME;
+					style = JC.Date.FORMAT_TYPE_DATETIME;
 				}
 				
-				return this.formatDate(
+				return JC.Date.formatDate(
 					style,
-					this.getRandomDateByRange(start, end)
+					JC.Date.getRandomDateByRange(start, end)
 				);
 			},
 			/**
@@ -1415,7 +1478,7 @@ var JC = jConcise = (function(){
 			 * @param {String} style
 			 */
 			getRandomDateStrArrByRange: function(size, start, end, style){
-				var arr = this.getRandomDateArrByRange(size, start, end);
+				var arr = JC.Date.getRandomDateArrByRange(size, start, end);
 				arr.sort(function(a, b){
 					return a - b;
 				});
@@ -1483,7 +1546,7 @@ var JC = jConcise = (function(){
 				end.setMinutes(end.getMinutes() + i_m);
 				end.setSeconds(end.getSeconds() + i_s);
 				
-				return this.getRandomDateByRange(start, end);
+				return JC.Date.getRandomDateByRange(start, end);
 			},
 			/**
 			 * 以当前系统时间为基准，指定一个时间偏移量，获取一个该偏移量内的随机时间字符串
@@ -1491,7 +1554,7 @@ var JC = jConcise = (function(){
 			 * @param {String} style
 			 */
 			getRandomDateStrByNow: function(offset, style){
-				return this.formatDate(style, this.getRandomDateByNow(offset));
+				return JC.Date.formatDate(style, JC.Date.getRandomDateByNow(offset));
 			},
 			/**
 			 * 以当前系统时间为基准，指定一个时间偏移量，获取一组该偏移量内的随机时间对象
@@ -1522,7 +1585,7 @@ var JC = jConcise = (function(){
 			 * @return {Array}
 			 */
 			getRandomDateStrArrByNow: function(size, offset, style){
-				var arr = this.getRandomDateArrByNow(size, offset);
+				var arr = JC.Date.getRandomDateArrByNow(size, offset);
 				arr.sort(function(a, b){
 					return a - b;
 				});
@@ -1532,30 +1595,167 @@ var JC = jConcise = (function(){
 					strArr.push(JC.Date.formatDate(style, date));
 				});
 				return strArr;
+			},
+			/**
+			 * 获得date实例的两位数月份值
+			 * @param {Object} date
+			 */
+			getFullMonth: function(date) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				
+				var value = date.getMonth() + 1;
+				if (value > 9) return value.toString();
+				return '0' + value;
+			},
+			/**
+			 * 获得date实例的两位数日期值
+			 * @param {Object} date
+			 */
+			getFullDay: function(date) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				
+				var value = date.getDate() + 1;
+				if (value > 9) return value.toString();
+				return '0' + value;
+			},
+			/**
+			 * 获得date实例的两位数整点值
+			 * @param {Object} date
+			 */
+			getFullHours: function(date) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				
+				var value = date.getHours() + 1;
+				if (value > 9) return value.toString();
+				return '0' + value;
+			},
+			/**
+			 * 获得date实例的两位数分钟值
+			 */
+			getFullMinutes: function(date) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				
+				var value = date.getMinutes() + 1;
+				if (value > 9) return value.toString();
+				return '0' + value;
+			},
+			/**
+			 * 获得date实例的两位数秒值
+			 * @param {Object} date
+			 */
+			getFullSeconds: function(date) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				
+				var value = date.getSeconds() + 1;
+				if (value > 9) return value.toString();
+				return '0' + value;
+			},
+			/**
+			 * 获得增减后的日期实例。
+			 * @param {Object} date
+			 * @param {Object} milliseconds 要发生变化的毫秒值
+			 */
+			getDateByChanged: function(date, milliseconds) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				if (JC.isVoid(milliseconds) || !JC.isNumber(milliseconds)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Number.');
+				}
+				
+				return new Date(date.getTime() + milliseconds);
+			},
+			/**
+			 * 加减年数。
+			 * 2016-02-29 + 1year = 2017-03-01
+			 * @param {Object} date
+			 * @param {Object} num 年数
+			 */
+			addYears: function(date, num) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				if (JC.isVoid(num) || !JC.isNumber(num)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Number.');
+				}
+				
+				var newDate = new Date(date.getTime());
+				newDate.setFullYear(date.getFullYear() + num);
+				return newDate;
+			},
+			/**
+			 * 加减月份数。
+			 * 2016-01-31 + 1month = 2016-03-02
+			 * 2016-03-31 + 1month = 2016-05-01
+			 * 2016-03-31 + 2month = 2016-05-31
+			 * @param {Object} date
+			 * @param {Object} num 月份数
+			 */
+			addMonths: function(date, num) {
+				if (JC.isVoid(date) || !JC.isDate(date)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Date.');
+				}
+				if (JC.isVoid(num) || !JC.isNumber(num)) {
+					throw new TypeError('[JC - Date]Invalid parameter: null, undefined or not a Number.');
+				}
+				
+				var newDate = new Date(date.getTime());
+				newDate.setMonth(date.getMonth() + num);
+				return newDate;
+			},
+			/**
+			 * 加减天数
+			 * @param {Object} date
+			 * @param {Object} num 天数
+			 */
+			addDays: function(date, num) {
+				return JC.Date.getDateByChanged(date, num * GCP.Date.oneDayMillisecond);
+			},
+			/**
+			 * 加减整点数
+			 * @param {Object} date
+			 * @param {Object} num 整点数
+			 */
+			addHours: function(date, num) {
+				return JC.Date.getDateByChanged(date, num * 60 * 60 * 1000);
+			},
+			/**
+			 * 加减分钟数
+			 * @param {Object} date
+			 * @param {Object} num 分钟数
+			 */
+			addMinutes: function(date, num) {
+				return JC.Date.getDateByChanged(date, num * 60 * 1000);
+			},
+			
+			/**
+			 * 比较两个时间对象的大小
+			 * @param {Object} date1
+			 * @param {Object} date2
+			 * @return 0，两者相等；1，前者大于后者；-1，前者小于后者
+			 */
+			compare: function(date1, date2)	{
+				var time1 = date1.getTime();
+				var time2 = date2.getTime();
+				if (time1 > time2) {
+					return 1;
+				} else if (time1 < time2) {
+					return -1;
+				}
+				return 1;
 			}
 			
 			
-			
-			
-			
-			
-			
-//			
-//			setCurrentTime: function(str){
-//				return new Date(str);
-//			},
-//			/**
-//			 * 计时器
-//			 */
-//			timer: function(){
-//				
-//			},
-//			/**
-//			 * 倒计时
-//			 */
-//			countdown: function(seconds){
-//				
-//			},
 		},
 		
 		
@@ -1591,7 +1791,7 @@ var JC = jConcise = (function(){
 			 * Get browser's version
 			 */
 			getVersion: function(){
-				var browserName = this.getName();
+				var browserName = JC.Browser.getName();
 				var nua = navigator.userAgent.toLocaleLowerCase();
 				var reg = new RegExp(browserName.toLocaleLowerCase() + '/[\\d\\.]+');
 				var arr = nua.match(reg) || [browserName + '/unknow version'];
