@@ -663,6 +663,22 @@ var JC = jConcise = (function(){
 				var tN = Number(str);
 				if (!isNaN(tN)) return true;
 				return false;
+			},
+			/**
+			 * 格式化字符串，例如：format('My name is {0}, I\'m {1} years old.', 'Alice', 18)
+			 */
+			format: function() {
+				JC.Regular.checkArgumentsCount(arguments, 1);
+				var str = arguments[0];
+				if (JC.isVoid(str) || !JC.isString(str)) {
+					throw new TypeError('[JC - String]Invalid arguments: null, undefined or not a String.');
+				}
+				
+				var args = JC.Array.convertFromArrayLike(arguments).slice(1);
+				console.log(args);
+				return str.replace(/\{(\d+)\}/g, function(s, i) {
+					return args[i];
+				});
 			}
 		},
 		
