@@ -467,24 +467,12 @@ var JC = jConcise = (function(){
 			logObj: function(obj, execFunc){
 				if(!JC.isBoolean(execFunc)) execFunc = false;
 				
-				for(var name in obj){
-					if(JC.isFunction(obj[name]) && execFunc == true){
-						obj[name]();
-					}else{
-						console.log(name + ': ' + obj[name]);
-					}
-				}
-			},
-			/**
-			 * 遍历一个对象，针对其中的元素执行某方法
-			 * @param {Object} obj 可遍历的对象String、Array、Object
-			 * @param {Object} func 遍历到每个元素后执行的方法，接收当前被遍历的元素
-			 */
-			loopObj: function(obj, func){
-				if(!JC.isFunction(func)) return;
-				
 				for(var key in obj){
-					func(obj[key]);
+					if(JC.isFunction(obj[key]) && execFunc == true){
+						obj[key]();
+					}else{
+						console.log(key + ': ' + obj[key]);
+					}
 				}
 			},
 			/**
@@ -893,6 +881,23 @@ var JC = jConcise = (function(){
 				return true;
 			},
 			/**
+			 * 遍历一个数组，针对其中的元素执行某方法
+			 * @param {Array} arr 要遍历的数组对象
+			 * @param {Function} func 遍历到每个元素后执行的方法，接收当前被遍历的元素
+			 */
+			iterate: function(arr, func){
+				if (JC.isVoid(arr) || !JC.isArray(arr)) {
+					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not an .');
+				}
+				if (JC.isVoid(func) || !JC.isFunction(func)) {
+					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not a Function.');
+				};
+				
+				for(var i = 0, l = arr.length;i < l;i++){
+					func(arr[i]);
+				}
+			},
+			/**
 			 * 清空入参数组
 			 */
 			clear: function() {
@@ -913,6 +918,43 @@ var JC = jConcise = (function(){
 				}
 				
 				return [].slice.call(obj);
+			},
+			/**
+			 * Convert array to object.
+			 * @param {Object} arr
+			 * @param {Boolean} excludeVoid if true, exclude null and undefined. Default false.
+			 */
+			convert2Object: function(arr, excludeVoid) {
+				if (JC.isVoid(arr) || !JC.isArray(arr)) {
+					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not an Array.');
+				}
+				if (JC.isVoid(excludeVoid)) {
+					excludeVoid = false;
+				} else {
+					if (!JC.isBoolean(excludeVoid)) {
+						throw new TypeError('[JC - Object]Invalid arguments: the second argument must be a Boolean.');
+					}
+				}
+				
+				// Solution 1:
+				var obj = {};
+				for (var i = 0, l = arr.length;i < l;i++) {
+					if (excludeVoid === false || (!JC.isVoid(arr[i]) && excludeVoid === true)) {
+						obj[i] = arr[i];
+					}
+				}
+				
+				// Solution 2: not support IE6.
+				// From StackOverflow - http://stackoverflow.com/questions/4215737/convert-array-to-object
+				/*
+				var obj = arr.reduce(function(preValue, curValue, index) {
+					if (excludeVoid === false || (!JC.isVoid(curValue) && excludeVoid === true)) {
+						preValue[index] = curValue;
+					}
+					return preValue;
+				}, {});
+				*/
+				return obj;
 			},
 			/**
 			 * 获得第一个符合条件的对象在数组中的索引，如果数组中没有符合条件对象，返回-1。
@@ -978,6 +1020,23 @@ var JC = jConcise = (function(){
 					throw new TypeError('[JC - Object]Invalid arguments: not an Object.');
 				}
 				return Object.keys(obj).length;
+			},
+			/**
+			 * 遍历一个对象，针对其中的元素执行某方法
+			 * @param {Object} obj 要遍历的对象
+			 * @param {Object} func 遍历到每个元素后执行的方法，接收当前被遍历的元素
+			 */
+			iterate: function(obj, func){
+				if (JC.isVoid(obj) || !JC.isObject(obj)) {
+					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not an Object.');
+				}
+				if (JC.isVoid(func) || !JC.isFunction(func)) {
+					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not a Function.');
+				};
+				
+				for(var key in obj){
+					func(obj[key]);
+				}
 			},
 			/**
 			 * 克隆目标对象
@@ -1083,6 +1142,35 @@ var JC = jConcise = (function(){
 				}
 				
 				return obj;
+			},
+			/**
+			 * Convert an object to an array.
+			 * @param {Object} obj
+			 */
+			convert2Array: function(obj) {
+				if (JC.isVoid(obj) || !JC.isObject(obj)) {
+					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not an Object.');
+				}
+				
+				// Solution 1:
+				var arr = [];
+				for (var key in obj) {
+					if (obj.hasOwnProperty(key)) {
+						arr.push(obj[key]);
+					}
+				}
+				
+				// Solution 2: not support IE6.
+				// From stackoverflow.com - http://stackoverflow.com/questions/6857468/a-better-way-to-convert-js-object-to-array
+				/*
+				var arr = Object.keys(obj).map(function(key) {
+					if (obj.hasOwnProperty(key)) {
+						return obj[key];
+					}
+				});
+				*/
+				
+				return arr;
 			}
 		},
 		
@@ -1657,7 +1745,7 @@ var JC = jConcise = (function(){
 				});
 				
 				var strArr = [];
-				JC.Common.loopObj(arr, function(date){
+				JC.Object.iterate(arr, function(date){
 					strArr.push(JC.Date.formatDate(style, date));
 				});
 				return strArr;
@@ -1764,7 +1852,7 @@ var JC = jConcise = (function(){
 				});
 				
 				var strArr = [];
-				JC.Common.loopObj(arr, function(date){
+				JC.Object.iterate(arr, function(date){
 					strArr.push(JC.Date.formatDate(style, date));
 				});
 				return strArr;

@@ -58,6 +58,13 @@ var obj3 = {
 		age: 20
 	}
 };
+var obj4 = {
+    name: 'Alice',
+    age: 18,
+    greetings: function() {
+        console.log('Hello!');
+    }
+};
 
 var arr1 = [1,2.2,3,'4',null,undefined];
 
@@ -80,6 +87,12 @@ for (var i = 0, l = 10;i < l;i++) {
 var introSelf = 'My name is {0}, I\'m a {1} years old {2}.';
 console.log(JC.String.format(introSelf, 'Alice', 18, 'girl'));
 
+var arr2 = JC.Object.convert2Array(obj4);
+console.log(arr2);
+arr2[2]();
+
+var obj5 = JC.Array.convert2Object(arr1, false);
+console.log(obj5);
 
 </script>
 </head>
