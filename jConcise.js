@@ -1035,7 +1035,7 @@ var JC = jConcise = (function(){
 				};
 				
 				for(var key in obj){
-					func(obj[key]);
+					func(key, obj[key]);
 				}
 			},
 			/**
@@ -1361,12 +1361,31 @@ var JC = jConcise = (function(){
 				return prefix + uuid;
 			},
 			/**
-			 * 获取[0,maximum)之间的随机数
+			 * 获取[0,maximum)之间的随机数，如果没有入参，或入参不是数字，则生成不受限的随机数
 			 * @param {Object} maximum maximum 随机数最大值，不包含
 			 */
 			getRandomNum: function(maximum){
-				if(maximum == null) return Math.random();
+				if(JC.isVoid(maximum) || !JC.isNumber(maximum)) {
+					return Math.random();
+				}
 				return Math.floor(Math.random()*maximum);
+			},
+			/**
+			 * 获取[minimum, maximum)之间的随机数，左开右闭区间。两个入参不可或缺且必须是数字，最小值不能大于最大值
+			 * @param {Object} minimum 随机数最小值，包含
+			 * @param {Object} maximum 随机数最大值，不包含
+			 */
+			getRandomNumByRange: function(minimum, maximum) {
+				if (JC.isVoids(minimum, maximum) || !JC.isNumbers(minimum, maximum)) {
+					throw new TypeError('[JC - Math]Invalid arguments: null, undefined or not Numbers.');
+				} else if (minimum > maximum) {
+					throw new Error('[JC - Math]Invalid arguments: param 1 can not greater than param 2.');
+				} else if (minimum === maximum) {
+					return minimum;
+				}
+				
+				var tMax = maximum + (0 - minimum);
+				return this.getRandomNum(tMax) + minimum;
 			},
 			/**
 			 * 获取[0,maximum)之间的随机数数组，可不重复
@@ -1673,6 +1692,58 @@ var JC = jConcise = (function(){
 			},
 			
 			/**
+			 * 获得一个在年月日、时分秒上指定了具体时间或区间时间的随机时间，如果某参数值是null，则指定完全随机的时间。
+			 * 如果入参分别是：2016、4、5、23、5、7，生成的时间只能是2016年4月5日23时5分7秒。
+			 * 如果年入参是[2013, 2016]，生成的年分位于该数组之间，左开右闭。
+			 * @param {Object} year
+			 * @param {Object} month
+			 * @param {Object} day
+			 * @param {Object} hour
+			 * @param {Object} minute
+			 * @param {Object} seconds
+			 */
+			getRandomDateByEachRange: function(year, month, day, hour, minute, seconds) {
+				// 判断入参类型
+				// 如果是null，生成随机时间；如果是数值，使用该值；如果是区间，生成该区间内随机时间
+				if (JC.isVoid(year)) {
+					year = JC.Math.getRandomNumByRange(0, 10000);
+				} else if (JC.isArray(year)) {
+					year = JC.Math.getRandomNumByRange(year[0], year[1]);
+				}
+				
+				if (JC.isVoid(month)) {
+					month = JC.Math.getRandomNumByRange(1, 13);
+				} else if (JC.isArray(month)) {
+					month = JC.Math.getRandomNumByRange(month[0], month[1]);
+				}
+				
+				if (JC.isVoid(day)) {
+					day = JC.Math.getRandomNumByRange(1, 32);
+				} else if (JC.isArray(day)) {
+					day = JC.Math.getRandomNumByRange(day[0], day[1]);
+				}
+				
+				if (JC.isVoid(hour)) {
+					hour = JC.Math.getRandomNumByRange(0, 24);
+				} else if (JC.isArray(hour)) {
+					hour = JC.Math.getRandomNumByRange(hour[0], hour[1]);
+				}
+				
+				if (JC.isVoid(minute)) {
+					minute = JC.Math.getRandomNumByRange(0, 60);
+				} else if (JC.isArray(minute)) {
+					minute = JC.Math.getRandomNumByRange(minute[0], minute[1]);
+				}
+				
+				if (JC.isVoid(seconds)) {
+					seconds = JC.Math.getRandomNumByRange(0, 60);
+				} else if (JC.isArray(seconds)) {
+					seconds = JC.Math.getRandomNumByRange(seconds[0], seconds[1]);
+				}
+				return new Date(year + '/' + month + '/' + day + ' ' + hour + ':' + minute + ':' + seconds);
+			},
+			
+			/**
 			 * 获得一个指定时间区域内的随机时间
 			 * 如果入参并非都是Date对象，或者截止时间小于起始时间，则返回当前时间
 			 * @param {Date} start
@@ -1745,7 +1816,7 @@ var JC = jConcise = (function(){
 				});
 				
 				var strArr = [];
-				JC.Object.iterate(arr, function(date){
+				JC.Object.iterate(arr, function(key, date){
 					strArr.push(JC.Date.formatDate(style, date));
 				});
 				return strArr;
@@ -1852,7 +1923,7 @@ var JC = jConcise = (function(){
 				});
 				
 				var strArr = [];
-				JC.Object.iterate(arr, function(date){
+				JC.Array.iterate(arr, function(key, date){
 					strArr.push(JC.Date.formatDate(style, date));
 				});
 				return strArr;

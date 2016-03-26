@@ -85,14 +85,14 @@ for (var i = 0, l = 10;i < l;i++) {
 }
 */
 var introSelf = 'My name is {0}, I\'m a {1} years old {2}.';
-console.log(JC.String.format(introSelf, 'Alice', 18, 'girl'));
+//console.log(JC.String.format(introSelf, 'Alice', 18, 'girl'));
 
 var arr2 = JC.Object.convert2Array(obj4);
-console.log(arr2);
+//console.log(arr2);
 arr2[2]();
 
 var obj5 = JC.Array.convert2Object(arr1, false);
-console.log(obj5);
+//console.log(obj5);
 
 </script>
 </head>
@@ -233,10 +233,8 @@ function getBrowserInfo(){
 }
 
 
-console.log(JC.Date.getRandomDateStrArrByNow(5, '3M'));
-
-
-
+//console.log(JC.Date.getRandomDateStrArrByNow(5, '3M'));
+console.log(JC.Date.quickFormatDate('datetime', JC.Date.getRandomDateByEachRange(2016, [1, 4], null, [9, 18])));
 
 
 
