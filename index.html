@@ -109,6 +109,7 @@ var obj5 = JC.Array.convert2Object(arr1, false);
 	<button name="basicFuncBtn" onclick="getScrolledWidthHeight();">获得网页被卷去的高宽值</button>
 	<button name="basicFuncBtn" onclick="checkObjType();">检查对象类型</button>
 	<button name="basicFuncBtn" onclick="getRandomColor();">获得随机颜色</button>
+	<button name="basicFuncBtn" onclick="downloadJsonFile();">下载JavaScriptJSON数据</button>
 	
 	<!-- 选择器演示 -->
 	<h2>Selector</h2>
@@ -194,6 +195,17 @@ function checkObjType(){
 }
 function getRandomColor(){
 	statusBar.innerText = JC.getRandomColor();
+}
+/**
+ * 下载JSON数据
+ */
+function downloadJsonFile() {
+	var obj = {
+		name: 'Alice',
+		age: 18,
+		gender: false
+	};
+	JC.Common.downloadJsonData(obj, 'jsonFile');
 }
 
 // 数学工具方法

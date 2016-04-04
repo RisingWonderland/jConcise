@@ -75,6 +75,9 @@ var JC = jConcise = (function(){
 			return document.body.scrollLeft;
 		},
 		
+		
+		
+		
 		/**
 		 * 检查入参是否为无实际意义的参数（null或undefined）
 		 * @param {Object} obj
@@ -96,7 +99,7 @@ var JC = jConcise = (function(){
 		/**
 		 * 检查所有入参中是否存在无实际意义的参数（null或undefined）
 		 */
-		isVoidIn: function(){
+		isVoidIn: function() {
 			JC.Regular.checkArgumentVoid(arguments);
 			for (var i = 0, l = arguments.length;i < l;i++) {
 				if (JC.isVoid(arguments[i])) return true;
@@ -117,6 +120,26 @@ var JC = jConcise = (function(){
 			if (JC.isVoid(obj) || obj === '') return true;
 			if (JC.isArray(obj) && obj.length == 0) return true;
 			if (JC.isObject(obj) && JC.Object.getSize(obj) == 0) return true;
+			return false;
+		},
+		/**
+		 * 检查入参中是否全是空值。
+		 */
+		isEmptys: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments;i < l;i++) {
+				if (!JC.isEmpty(arguments)) return false;
+			}
+			return true;
+		},
+		/**
+		 * 检查入参中是否存在空值。
+		 */
+		isEmptyIn: function() {
+			JC.Regular.checkArgumentVoid(arguments);
+			for (var i = 0, l = arguments.length;i < l;i++) {
+				if (JC.isEmpty(arguments[i])) return true;
+			}
 			return false;
 		},
 		/**
@@ -458,7 +481,7 @@ var JC = jConcise = (function(){
 		
 		
 		// Common				----------> Begin
-		Common: {			
+		Common: {
 			/**
 			 * 以name - value的形式，log输出一个对象
 			 * @param {Object} obj 要遍历输出的对象
@@ -560,6 +583,32 @@ var JC = jConcise = (function(){
 					}
 				}
 				return obj;
+			},
+			/**
+			 * 将JavaScript数据，例如Object、Array、String转换为JSON数据，并以文本文件下载至客户机
+			 * reference: https://github.com/bgrins/devtools-snippets/blob/master/snippets/console-save/console-save.js
+			 * @param {Object} jsonData
+			 * @param {String} fileName
+			 */
+			downloadJsonData: function(jsonData, fileName) {
+				if (JC.isEmpty(fileName) || !JC.isString(fileName)) {
+					fileName = 'unknowName.json';
+				} else if (JC.isString(fileName)) {
+					fileName += '.json';
+				}
+				if (JC.isObject(jsonData)) {
+					jsonData = JSON.stringify(jsonData);
+				}
+			
+				var blob = new Blob([jsonData], {type: 'text/json'});
+				var e = document.createEvent('MouseEvents');
+				var a = document.createElement('a');
+				a.download = fileName;
+				a.href = window.URL.createObjectURL(blob);
+				a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+				e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+				a.dispatchEvent(e);
+				window.URL.revokeObjectURL(a.href);
 			}
 		},
 		// Common				----------> End
