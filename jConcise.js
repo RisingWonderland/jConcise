@@ -731,7 +731,7 @@ var JC = jConcise = (function(){
 		Array: {
 			/**
 			 * 计算数组内数字之和
-			 * @param {Array} arr
+			 * @param {Array} 	arr
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			sum: function(arr, strict){
@@ -752,7 +752,7 @@ var JC = jConcise = (function(){
 			},
 			/**
 			 * 计算数组内数字的平均值
-			 * @param {Array} arr
+			 * @param {Array} 	arr
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			avg: function(arr, strict){
@@ -776,7 +776,7 @@ var JC = jConcise = (function(){
 			},
 			/**
 			 * 获取一个数字数组中的最小值，如果没有合法的最小值，返回null
-			 * @param {Array} arr
+			 * @param {Array} 	arr
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			min: function(arr, strict){
@@ -800,7 +800,7 @@ var JC = jConcise = (function(){
 			},
 			/**
 			 * 获取一个数字数组中的最大值，如果没有合法的最大值，返回null
-			 * @param {Array} arr
+			 * @param {Array} 	arr
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 */
 			max: function(arr, strict){
@@ -824,9 +824,8 @@ var JC = jConcise = (function(){
 			},
 			/**
 			 * 获取一个数字数组中的最小值和最大值，如果没有合法的极值，对应返回值为null
-			 * @param {Array} arr
+			 * @param {Array} 	arr
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
-			 * @param {Array} 一个包含两个元素的数组，元素1是最小值，元素2是最大值
 			 */
 			extreme: function(arr, strict){
 				if(JC.isVoid(strict) || !JC.isBoolean(strict)){
@@ -856,8 +855,8 @@ var JC = jConcise = (function(){
 			},
 			/**
 			 * 计算一个数字数组中所有数字的次方
-			 * @param {Array} arr
-			 * @param {Number} exp 次方值
+			 * @param {Array} 	arr
+			 * @param {Number} 	exp 次方值
 			 * @param {Boolean} strict 是否不将字符串型式的数字计算在内，默认为true
 			 * @param {Boolean} returnAll 在返回的数组中，是否按照入参数组，原样（原值、原位置）返回非数字元素
 			 */
@@ -887,9 +886,9 @@ var JC = jConcise = (function(){
 			},
 			/**
 			 * 判断指定数组中是否包含目标值
-			 * @param {Array} arr
-			 * @param {Object} key
-			 * @return {Boolean} true，如果包含；false，如果不包含。
+			 * @param {Array} 		arr
+			 * @param {Object} 		key
+			 * @return {Boolean} 	true，如果包含；false，如果不包含。
 			 */
 			contains: function(arr, value) {
 				if (JC.isVoid(arr) || !JC.isArray(arr)) {
@@ -931,20 +930,59 @@ var JC = jConcise = (function(){
 			},
 			/**
 			 * 遍历一个数组，针对其中的元素执行某方法
-			 * @param {Array} arr 要遍历的数组对象
-			 * @param {Function} func 遍历到每个元素后执行的方法，接收当前被遍历的元素
+			 * @param {Array} 		arr 要遍历的数组对象
+			 * @param {Function} 	func 遍历到每个元素后执行的方法，接收当前被遍历的元素
 			 */
 			iterate: function(arr, func){
 				if (JC.isVoid(arr) || !JC.isArray(arr)) {
-					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not an .');
+					throw new TypeError('[JC - Array]Invalid arguments: null, undefined or not an .');
 				}
 				if (JC.isVoid(func) || !JC.isFunction(func)) {
-					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not a Function.');
+					throw new TypeError('[JC - Array]Invalid arguments: null, undefined or not a Function.');
 				};
 				
 				for(var i = 0, l = arr.length;i < l;i++){
 					func(arr[i]);
 				}
+			},
+			
+			/**
+			 * 遍历一个数组，针对其中的元素执行某方法
+			 * @param  {Array}  	arr          要遍历的数据对象
+			 * @param  {Function}  	func         遍历到每个数组元素后执行的方法，接收当前遍历的元素为入参
+			 * @param  {Number}  	duration     延迟时间，毫秒
+			 * @param  {Boolean} 	isDelayFirst 是否延迟优先，如果是，先延迟指定时间，再执行方法
+			 */
+			iterateByDelay: function(arr, func, duration, isDelayFirst) {
+				if (BT.isVoid(arr) || !BT.isArray(arr)) {
+					throw new TypeError('[JC - Array]Invalid arguments: null, undefined or not an Array.');
+				}
+				if (BT.isVoid(func) || !BT.isFunction(func)) {
+					throw new TypeError('[JC - Array]Invalid arguments: null, undefined or not a Function.');
+				}
+				if (BT.isVoid(duration) || !BT.isNumber(duration)) {
+					throw new TypeError('[JC - Array]Invalid arguments: null, undefined or not a Number.');
+				}
+
+				var length = arr.length;
+				if (length <= 0) {
+					return;
+				}
+				var i = 0;
+				if (isDelayFirst == false) {
+					func(arr[i]);
+					i++;
+					if (i >= length) {
+						return;
+					}
+				}
+				var intervalId = setInterval(function() {
+					func(arr[i]);
+					i++;
+					if (i >= length) {
+						clearInterval(intervalId);
+					}
+				}, duration);
 			},
 			/**
 			 * 清空入参数组
@@ -970,18 +1008,18 @@ var JC = jConcise = (function(){
 			},
 			/**
 			 * Convert array to object.
-			 * @param {Object} arr
+			 * @param {Object} 	arr
 			 * @param {Boolean} excludeVoid if true, exclude null and undefined. Default false.
 			 */
 			convert2Object: function(arr, excludeVoid) {
 				if (JC.isVoid(arr) || !JC.isArray(arr)) {
-					throw new TypeError('[JC - Object]Invalid arguments: null, undefined or not an Array.');
+					throw new TypeError('[JC - Array]Invalid arguments: null, undefined or not an Array.');
 				}
 				if (JC.isVoid(excludeVoid)) {
 					excludeVoid = false;
 				} else {
 					if (!JC.isBoolean(excludeVoid)) {
-						throw new TypeError('[JC - Object]Invalid arguments: the second argument must be a Boolean.');
+						throw new TypeError('[JC - Array]Invalid arguments: the second argument must be a Boolean.');
 					}
 				}
 				
@@ -1008,9 +1046,9 @@ var JC = jConcise = (function(){
 			/**
 			 * 获得第一个符合条件的对象在数组中的索引，如果数组中没有符合条件对象，返回-1。
 			 * 该方法不涉及任何对象的继承属性。
-			 * @param {Object} arr
-			 * @param {Object} obj
-			 * @return {Boolean} -1, no eligible object; >= 0, the index of eligible object.
+			 * @param {Object} 		arr
+			 * @param {Object} 		obj
+			 * @return {Boolean} 	-1, no eligible object; >= 0, the index of eligible object.
 			 */
 			getIndexOfEligibleObj: function(arr, obj) {
 				// 第二入参必须存在

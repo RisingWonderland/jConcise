@@ -248,6 +248,33 @@ function getBrowserInfo(){
 //console.log(JC.Date.getRandomDateStrArrByNow(5, '3M'));
 console.log(JC.Date.quickFormatDate('datetime', JC.Date.getRandomDateByEachRange(2016, [1, 4], null, [9, 18])));
 
+var arr = [1,2,3];
+function iterateByDelay(arr, func, duration, isDelayFirst) {
+	var length = arr.length;
+	if (length <= 0) {
+		return;
+	}
+	var i = 0;
+	if (isDelayFirst == false) {
+		func(arr[i]);
+		i++;
+		if (i >= length) {
+			return;
+		}
+	}
+	var intervalId = setInterval(function() {
+		func(arr[i]);
+		i++;
+		if (i >= length) {
+			clearInterval(intervalId);
+		}
+	}, duration);
+}
+
+iterateByDelay(arr, function(obj) {
+	console.log(obj);
+}, 1000, false);
+
 
 
 
