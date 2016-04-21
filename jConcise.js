@@ -2189,6 +2189,33 @@ var JC = jConcise = (function(){
 		 */
 		Browser: {
 			/**
+			 * 判断浏览器是否支持H5
+			 */
+			isSupportH5: function() {
+				if (JC.Browser.isSupportApplicationCache() && JC.Browser.isSupportVideo() && JC.Browser.isSupportVideo()) {
+					return true;
+				}
+				return false;
+			},
+			/**
+			 * 判断浏览器是否支持ApplicationCache
+			 */
+			isSupportApplicationCache: function() {
+				return window.applicationCache !== undefined ? true : false;
+			},
+			/**
+			 * 判断浏览器是否支持Video标签
+			 */
+			isSupportVideo: function() {
+				return !!document.createElement('video').canPlayType;
+			},
+			/**
+			 * 判断浏览器是否支持Canvas
+			 */
+			isSupportCanvas: function() {
+				return !!document.createElement('Canvas').getContext;
+			},
+			/**
 			 * Get browser's name
 			 */
 			getName: function(){
