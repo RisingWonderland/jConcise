@@ -271,9 +271,8 @@ var JC = jConcise = (function(){
 		 * 判断入参是否为数组
 		 * @param {Object} obj 要检查的内容
 		 */
-		isArray: function(obj){
-			if(JC.isVoid(obj)) return false;
-			if(typeof obj === 'object' && obj.constructor === Array){
+		isArray: Array.isArray || function(obj){
+			if(typeof obj === 'object' && Object.prototype.toString.call(obj) === '[object Array]'){
 				return true;
 			}
 			return false;
@@ -304,7 +303,7 @@ var JC = jConcise = (function(){
 		 */
 		isFunction: function(obj){
 			if(JC.isVoid(obj)) return false;
-			if(typeof obj === 'function' && obj.constructor === Function){
+			if(typeof obj === 'function' && Object.prototype.toString.call(obj) === '[object Function]'){
 				return true;
 			}
 			return false;
@@ -366,7 +365,7 @@ var JC = jConcise = (function(){
 		 */
 		isRegExp: function(obj){
 			if(JC.isVoid(obj)) return false;
-			if(typeof obj === 'object' && obj.constructor === RegExp){
+			if((typeof obj === 'object' || typeof obj === 'function') && obj.constructor === RegExp){
 				return true;
 			}
 			return false;
@@ -994,6 +993,19 @@ var JC = jConcise = (function(){
 						tObj.splice(0, tObj.length);
 					}
 				}
+			},
+			/**
+			 * 判断入参是否是类数组对象
+			 * @param {Object} obj
+			 */
+			isArrayLike: function(obj) {
+				if (obj && typeof obj === 'object') {
+					var len = obj.length;
+					if (isFinite(len) && len >= 0 && len === Math.floor(len) && len < 2^32) {
+						return true;
+					}
+				}
+				return false;
 			},
 			/**
 			 * 将类数组对象转换为数组
