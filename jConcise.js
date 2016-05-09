@@ -928,6 +928,17 @@ var JC = jConcise = (function(){
 				return true;
 			},
 			/**
+			 * 打乱数据内元素的排列顺序，与sort()函数的作用相反。
+			 */
+			mixUp: function() {
+				for (var i = 0, l = arguments.length;i < l;i++) {
+					var arr = arguments[i];
+					arr.sort(function(a, b) {
+						return Math.random() - 0.5;
+					});
+				}
+			},
+			/**
 			 * 遍历一个数组，针对其中的元素执行某方法
 			 * @param {Array} 		arr 要遍历的数组对象
 			 * @param {Function} 	func 遍历到每个元素后执行的方法，接收当前被遍历的元素
