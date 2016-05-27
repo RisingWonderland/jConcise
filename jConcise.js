@@ -118,8 +118,8 @@ var JC = jConcise = (function(){
 		 */
 		isEmpty: function(obj) {
 			if (JC.isVoid(obj) || obj === '') return true;
-			if (JC.isArray(obj) && obj.length == 0) return true;
-			if (JC.isObject(obj) && JC.Object.getSize(obj) == 0) return true;
+			if (JC.isArray(obj) && obj.length === 0) return true;
+			if (JC.isObject(obj) && JC.Object.getSize(obj) === 0) return true;
 			return false;
 		},
 		/**
@@ -417,6 +417,19 @@ var JC = jConcise = (function(){
 		isSameType: function(obj1, obj2) {
 			if (typeof obj1 === typeof obj2 && obj1.constructor === obj2.constructor) return true;
 			return false;
+		},
+		
+		inherit: function(obj) {
+			if (JC.isVoid(obj) || (!JC.isObject(obj) && !JC.isFunction(obj))) {
+				throw new TypeError('[JC.inherit]Invalid arguments: null, undefined, not an object or not a function.');
+			}
+			if (Object.create && JC.isFunction(Object.create)) {
+				return Object.create(obj);
+			}
+			
+			function f() {};
+			f.prototype = obj;
+			return new f();
 		},
 		
 		
@@ -952,7 +965,7 @@ var JC = jConcise = (function(){
 				};
 				
 				for(var i = 0, l = arr.length;i < l;i++){
-					func(arr[i]);
+					func(arr[i], i, arr);
 				}
 			},
 			
@@ -980,14 +993,14 @@ var JC = jConcise = (function(){
 				}
 				var i = 0;
 				if (isDelayFirst == false) {
-					func(arr[i]);
+					func(arr[i], i, arr);
 					i++;
 					if (i >= length) {
 						return;
 					}
 				}
 				var intervalId = setInterval(function() {
-					func(arr[i]);
+					func(arr[i], i, arr);
 					i++;
 					if (i >= length) {
 						clearInterval(intervalId);
@@ -2201,6 +2214,88 @@ var JC = jConcise = (function(){
 		
 		
 		// Date					----------> End
+		
+		
+		
+		
+		
+		
+		// Browser					----------> Begin
+		DOM: {
+			/**
+			 * 销毁指定的dom元素
+			 * support IE
+			 * @param {Object} dom 要销毁的目标元素
+			 */
+			destroy: function(dom) {
+				if (JC.Array.isArrayLike(dom)) {
+					var tDom = JC.Array.convertFromArrayLike(dom);
+					// do not use for...in
+					for (var i = 0, l = tDom.length;i < l;i++) {
+						var td = tDom[i];
+						if (td && td.parentNode) {
+							td.parentNode.removeChild(td);
+						}
+					}
+					return;
+				} else {
+					if (dom && dom.parentNode) {
+						dom.parentNode.removeChild(dom);
+					}
+				}
+				
+			},
+			/**
+			 * 销毁指定元素的所有子元素
+			 * support IE
+			 * @param {Object} dom 要销毁的元素的父元素
+			 */
+			destroyChildren: function(dom) {
+				if (dom && dom.children && JC.Array.isArrayLike(dom.children)) {
+					var tDom = JC.Array.convertFromArrayLike(dom.children);
+					// do not use for...in
+					for (var i = 0, l = tDom.length;i < l;i++) {
+						dom.removeChild(tDom[i]);
+					}
+				}
+			},
+			/**
+			 * 判断元素中是否存在指定名称的Class
+			 * @param {Object} el
+			 * @param {Object} className
+			 */
+			hasClass: function(el, className) {
+				if (!el) {
+					return;
+				}
+				return el.className.match(new RegExp('(?:\\s|^)' + className + '(?:\\s|$)'));
+			},
+			/**
+			 * 为元素增加指定名称的Class
+			 * @param {Object} el
+			 * @param {Object} className
+			 */
+			addClass: function(el, className) {
+				if (!this.hasClass(el, className)) {
+					el.className += ' ' + className;
+				}
+			},
+			/**
+			 * 移除元素中指定名称的Class
+			 * @param {Object} el
+			 * @param {Object} className
+			 */
+			removeClass: function(el, className) {
+				if (this.hasClass(el, className)) {
+					var classContent = el.className.match(new RegExp('(?:\\s|^)' + className + '(?:\\s|$)'))[0];
+					el.className = el.className.replace(classContent, ' ').trim();
+				}
+			}
+		},
+		
+		
+		// Browser					----------> Begin
+		
 		
 		
 		

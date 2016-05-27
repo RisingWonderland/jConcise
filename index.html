@@ -38,63 +38,23 @@ button {
 button:active {
 	background-color: #3B5999;
 }
+.cn1 {
+	position: relative;
+	margin-top: 70px;
+	width: 200px;
+	height: 100px;
+}
+.cn2 {
+	height: 50px;
+}
+.cn3 {
+	background-color: #EE82EE;
+}
+.cn4 {
+	color: #3598DB;
+}
 </style>
 <script type="text/javascript" src="./jConcise.js"></script>
-<script type="text/javascript">
-var obj1 = {
-	name: 'alice',
-	age: 18,
-	mate: {
-		name: 'alex',
-		age: 20
-	}
-};
-var obj2 = {};
-var obj3 = {
-	name: 'alice',
-	age: 18,
-	mate: {
-		name: 'admin',
-		age: 20
-	}
-};
-var obj4 = {
-    name: 'Alice',
-    age: 18,
-    greetings: function() {
-        console.log('Hello!');
-    }
-};
-
-var arr1 = [1,2.2,3,'4',null,undefined];
-
-/*
-var obj1 = {
-	name: 'Alice',
-	age: 18,
-	male: false,
-	greeting: 'Hello!'
-};
-var itr = JC.Iterator(obj1);
-for (var i = 0, l = 10;i < l;i++) {
-	console.log(itr.notBegun());
-	console.log(itr.hasDone());
-	console.log(itr.inProgress());
-	console.log(itr.next());
-	console.log('==================');
-}
-*/
-var introSelf = 'My name is {0}, I\'m a {1} years old {2}.';
-//console.log(JC.String.format(introSelf, 'Alice', 18, 'girl'));
-
-var arr2 = JC.Object.convert2Array(obj4);
-//console.log(arr2);
-arr2[2]();
-
-var obj5 = JC.Array.convert2Object(arr1, false);
-//console.log(obj5);
-
-</script>
 </head>
 
 <body style="background-color: #E6E6E6;">
@@ -136,6 +96,9 @@ var obj5 = JC.Array.convert2Object(arr1, false);
 	<!-- 浏览器相关 -->
 	<h2>Browser</h2>
 	<button name="browserFnBtn" onclick="getBrowserInfo();">获得浏览器信息</button>
+
+	<div id="cnTest" class="cn1 cn2 cn3">Your world shall be born.</div>
+
 
 	<br />
 	<br />
@@ -258,9 +221,55 @@ function isArray(obj) {
 console.log(isArray(arr));
 console.log(Object.prototype.toString.call(arr));
 console.log(Object.prototype);
-console.log(Array.isArray(arr));
+//console.log(Array.isArray(arr));
 console.log(JC.isArray(arr));
+console.log('===========================================');
 console.log(Object.prototype.toString.call(null));
+console.log(Object.prototype.toString.call(undefined));
+console.log(Object.prototype.toString.call(40));
+console.log(Object.prototype.toString.call('hello'));
+console.log(Object.prototype.toString.call(false));
+console.log(Object.prototype.toString.call({}));
+console.log(Object.prototype.toString.call([]));
+console.log(Object.prototype.toString.call(function(){}));
+console.log(Object.prototype.toString.call(new Date()));
+console.log(Object.prototype.toString.call(new RegExp('')));
+console.log(Object.prototype.toString.call(new Error));
+say(1,2,3);
+function say() {
+	console.log(Object.prototype.toString.call(arguments));
+}
+console.log('===========================================');
+// IE9- not support  these types: Null, Undefined, Arguments
+var typeArr = ['Null', 'Undefined', 'Number', 'String', 'Boolean', 'Object', 'Array', 'Function', 'Date', 'RegExp', 'Error'];
+var jc = {
+	getType: function(obj) {
+		if (obj === null) {
+			return 'null';
+		} else if (obj === undefined) {
+			return 'undefined';
+		}
+		var typeStr = Object.prototype.toString.call(obj);
+		return typeStr.match(/\[object (.+)\]/)[1].toLowerCase();
+	}
+};
+JC.Array.iterate(typeArr, function(value, index, arr) {
+	jc['is' + value] = function(obj) {
+		return jc.getType(obj) === value.toLowerCase();
+	}
+});
+console.log(jc.isNull(undefined));
+console.log(jc.isUndefined(null));
+console.log(jc.isNumber('40'));
+console.log(jc.isString(40));
+console.log(jc.isBoolean('false'));
+console.log(jc.isObject(null));
+console.log(jc.isArray({}));
+console.log(jc.isFunction(''));
+console.log(jc.isDate(''));
+console.log(jc.isRegExp(''));
+console.log(jc.isError(''));
+console.log(JC.isFunction(Object.create));
 
 
 </script>
