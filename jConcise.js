@@ -597,6 +597,27 @@ var JC = jConcise = (function(){
 				return obj;
 			},
 			/**
+			 * 以js对象形式返回url中问号传值的内容
+			 * @param {Object} url 要分析的url
+			 */
+			getParamsFromUrl: function(url) {
+				if (url.indexOf('?') === -1) {
+					return null;
+				}
+				
+				var paramsSection = url.substring(url.indexOf('?') + 1);
+				var kvs = paramsSection.split('&');
+				var params = {};
+				for (var i = 0, l = kvs.length;i < l;i++) {
+					var kv = kvs[i];
+					if (kv.indexOf('=') != -1) {
+						var arr = kv.split('=');
+						params[arr[0]] = arr[1];
+					}
+				}
+				return params;
+			},
+			/**
 			 * 将JavaScript数据，例如Object、Array、String转换为JSON数据，并以文本文件下载至客户机
 			 * reference: https://github.com/bgrins/devtools-snippets/blob/master/snippets/console-save/console-save.js
 			 * @param {Object} jsonData
